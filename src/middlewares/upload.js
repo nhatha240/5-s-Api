@@ -48,8 +48,10 @@ const uploadImage = function (field, type = 'single') {
         });
       }
     } catch (error) {
+
       console.log(error);
       console.log('error', req.file);
+      next();
       return res.status(500).send({
         message: `Could not upload the file: ${req.file.originalname}. ${error}`,
       });
