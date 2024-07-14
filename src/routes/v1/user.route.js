@@ -14,7 +14,7 @@ router
 router
   .route('/:userId')
   .get(auth(), validate(userValidation.getUser), userController.getUser)
-  .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
+  .patch(auth(), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
 router.post('like', auth(), validate(userValidation.like), userController.likeProduct);
 router.post('unlike', auth(), validate(userValidation.unlike), userController.unlikeProduct);
