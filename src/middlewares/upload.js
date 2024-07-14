@@ -4,6 +4,10 @@ const multer = require('multer');
 const uploadImage = function (field, type = 'single') {
   return async (req, res, next) => {
     try {
+      if (!req.files) {
+        // return res.status(400).send({ message: 'Please upload a file!' });
+        next();
+      }
       if (type === 'single') {
         upload.single(field)(req, res, function (err) {
           if (err instanceof multer.MulterError) {
