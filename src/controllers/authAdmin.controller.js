@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { authAdminService, tokenService } = require('../services');
+const { authAdminService, tokenService, adminService} = require('../services');
 // const { adminRoles } = require('../config/adminRoles');
 /**
  * login admin
@@ -14,9 +14,8 @@ const login = catchAsync(async (req, res) => {
   res.send({ admin, tokens });
 });
 const register = catchAsync(async (req, res) => {
-  console.log(req.body);
-  const user = await authAdminService.registerAdmin(req.body);
-  res.status(httpStatus.CREATED).send(user);
+  const user = await adminService.createAdmin(req.body);
+  res.send(user);
 });
 
 const logout = catchAsync(async (req, res) => {

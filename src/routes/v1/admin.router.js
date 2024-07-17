@@ -45,11 +45,12 @@ router.post(
 );
 router.get('/get-products', admin('manageShop'), adminController.getProducts);
 router.get('/get-product/:id', validate(productValidation.getProduct), admin('manageShop'), adminController.getProduct);
+console.log('productValidation.updateProduct');
 router.put(
   '/update-product/:id',
   uploadImage('image'),
   validate(productValidation.updateProduct),
-  admin('manageShop'),
+  admin(),
   adminController.updateProduct
 );
 router.delete(

@@ -73,6 +73,7 @@ const getProduct = catchAsync(async (req, res) => {
 });
 
 const updateProduct = catchAsync(async (req, res) => {
+  console.log('req.body', req.body);
   const result = await productService.updateProduct(req.admin, req.params.id, req.body);
   res.send(result);
 });

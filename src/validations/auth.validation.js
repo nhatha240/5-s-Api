@@ -5,7 +5,7 @@ const registerAdmin = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
-    image: Joi.string().required(),
+    image: Joi.string(),
     name: Joi.string().required(),
     role: Joi.string().valid('admin', 'delivery', 'shop').required(),
   }),

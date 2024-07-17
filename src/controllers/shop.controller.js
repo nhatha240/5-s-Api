@@ -57,6 +57,7 @@ const getShopProductById = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(product);
 });
 const updateShopProduct = catchAsync(async (req, res) => {
+  console.log('shop code req.body', req.body);
   const product = await productService.shopUpdateProduct(req.admin._id, req.params.productId, req.body);
   res.status(httpStatus.OK).send(product);
 });

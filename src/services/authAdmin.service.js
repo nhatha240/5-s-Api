@@ -24,10 +24,6 @@ const loginAdminWithEmailAndPassword = async (email, password) => {
  * @param {*} body
  * @returns
  */
-const registerAdmin = async (body) => {
-  const admin = await adminService.createAdmin(body);
-  return admin;
-};
 
 /**
  * refresh Auth Token
@@ -71,7 +67,6 @@ const resetPassword = async (user, password) => {
 };
 module.exports = {
   loginAdminWithEmailAndPassword,
-  registerAdmin,
   refreshAuthToken,
   forgotPassword,
   resetPassword,
