@@ -10,6 +10,7 @@ const config = require('./config/config');
 const morgan = require('./config/morgan');
 const { jwtStrategy } = require('./config/passport');
 const { authLimiter } = require('./middlewares/rateLimiter');
+const bodyParser = require('body-parser');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
@@ -25,7 +26,7 @@ if (config.env !== 'test') {
 app.use(helmet());
 app.disable('x-powered-by');
 // parse json request body
-app.use(express.json());
+app.use(bodyParser.json());
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));

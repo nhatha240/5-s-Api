@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { adminService, shopService, productService, userService, orderService } = require('../services');
+const { adminService, shopService, productService, userService, orderService, categoryService } = require('../services');
 
 const getAdmins = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role', 'email', 'shop']);
@@ -129,7 +129,105 @@ const deleteOrder = catchAsync(async (req, res) => {
   await orderService.removeOrder(req.params.id);
   res.status(httpStatus.NO_CONTENT).send();
 });
+/**
+ * categories controller
+ */
 
+/**
+ *  create category controller
+ */
+
+const createCategory = catchAsync(async (req, res) => {
+  const result = await categoryService.createCategory(req.body);
+  res.status(httpStatus.CREATED).send(result);
+});
+
+/**
+ *  get categories controller
+ */
+
+const getCategories = catchAsync(async (req, res) => {
+  const result = await categoryService.queryCategories();
+  res.send(result);
+});
+/**
+ * get category by id controller
+ */
+
+const getCategory = catchAsync(async (req, res) => {
+  const result = await categoryService.getCategoryById(req.params.id);
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
+  }
+  res.send(result);
+});
+/**
+ * update category by id controller
+ */
+
+const updateCategory = catchAsync(async (req, res) => {
+  const result = await categoryService.updateCategoryById(req.params.id, req.body);
+  res.send(result);
+});
+/**
+ * delete category by id controller
+ */
+
+const deleteCategory = catchAsync(async (req, res) => {
+  await categoryService.removeCategory(req.params.id);
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
+/**
+ * subcategories controller
+ */
+
+/**
+ * create subcategory controller
+ */
+
+const createSubCategory = catchAsync(async (req, res) => {
+  const result = await categoryService.createSubCategory(req.body);
+  res.status(httpStatus.CREATED).send(result);
+});
+
+/**
+ * get subcategories controller
+ */
+
+const getSubCategories = catchAsync(async (req, res) => {
+  const result = await categoryService.querySubCategories();
+  res.send(result);
+});
+/**
+ *
+ * get subcategory by id controller
+ */
+
+const getSubCategory = catchAsync(async (req, res) => {
+  const result = await categoryService.getSubCategoryById(req.params.id);
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
+  }
+  res.send(result);
+});
+/**
+ * update subcategory by id controller
+ */
+
+const updateSubCategory = catchAsync(async (req, res) => {
+  const result = await categoryService.updateSubCategoryById(req.params.id, req.body);
+  res.send(result);
+});
+/**
+ * delete subcategory by id controller
+ */
+
+const deleteSubCategory = catchAsync(async (req, res) => {
+  await categoryService.removeSubCategory(req.params.id);
+  res.status(httpStatus.NO_CONTENT).send();
+}
+);
 module.exports = {
   getAdmins,
   getAdminId,
@@ -152,4 +250,14 @@ module.exports = {
   getOrder,
   updateOrder,
   deleteOrder,
+  createCategory,
+  getCategories,
+  getCategory,
+  updateCategory,
+  deleteCategory,
+  createSubCategory,
+  getSubCategories,
+  getSubCategory,
+  updateSubCategory,
+  deleteSubCategory,
 };

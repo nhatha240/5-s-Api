@@ -1,6 +1,6 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
-const { authValidation, shopValidation, productValidation } = require('../../validations');
+const { authValidation, shopValidation, productValidation, categoryValidation, subCategoryValidation } = require('../../validations');
 const { authAdminController, adminController, shopController } = require('../../controllers');
 const admin = require('../../middlewares/admin');
 const uploadImage = require('../../middlewares/upload');
@@ -73,5 +73,25 @@ router.get('/get-orders', admin('manageShop'), adminController.getOrders);
 router.get('/get-order/:id', admin('manageShop'), adminController.getOrder);
 router.put('/update-order/:id', admin('manageShop'), adminController.updateOrder);
 router.delete('/delete-order/:id', admin('manageShop'), adminController.deleteOrder);
+
+/*
+ * categories routes
+ */
+
+router.post('/create-category', admin('manageShop'), validate(categoryValidation.createCategory), adminController.createCategory);
+router.get('/get-categories', admin('manageShop'), validate(categoryValidation.getCategories), adminController.getCategories);
+router.get('/get-category/:id', admin('manageShop'), validate(categoryValidation.getCategory), adminController.getCategory);
+router.put('/update-category/:id', admin('manageShop'), validate(categoryValidation.updateCategory), adminController.updateCategory);
+router.delete('/delete-category/:id', admin('manageShop'), validate(categoryValidation.deleteCategory), adminController.deleteCategory);
+
+/*
+  * Subcategories routes
+  */
+router.post('/create-subcategory', admin('manageShop'), validate(subCategoryValidation.deleteCategory), adminController.createSubCategory);
+router.get('/get-subcategories', admin('manageShop'), validate(subCategoryValidation.getCategories), adminController.getSubCategories);
+router.get('/get-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.getCategory), adminController.getSubCategory);
+router.put('/update-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.updateCategory), adminController.updateSubCategory);
+router.delete('/delete-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.deleteCategory), adminController.deleteSubCategory);
+
 
 module.exports = router;
