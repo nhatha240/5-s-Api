@@ -5,6 +5,7 @@ const shopRoute = require('./shop.router');
 const userRoute = require('./user.route');
 const docsRoute = require('./docs.route');
 const productsRoute = require('./products.route');
+const thongKeRoute= require('./thongKe.route');
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -29,6 +30,10 @@ const defaultRoutes = [
   {
     path: '/products',
     route: productsRoute,
+  },
+  {
+    path: '/thongke',
+    route: thongKeRoute,
   },
 ];
 

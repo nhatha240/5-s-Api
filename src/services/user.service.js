@@ -79,6 +79,62 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+/**
+ * thóng kê user theo tuần tháng
+ */
+
+const createdLastTimeCount = async (time) => {
+  // Lượng người dùng vào web
+  const user = await User.countDocuments({
+    createdAt: { $gte: time },
+  });
+  // Số lượng product thêm vào giỏ hàng
+  // Số lượng đơn hàng
+  // Số lượng người dùng đăng ký
+  return user;
+};
+
+const lastLoginLastTimeCount = async (time) => {
+  const user = await User.countDocuments({
+    lastLogin: { $gte: time },
+  });
+  return user;
+};
+
+const createdTotal = async (now, startOfCurrentMonth, startOfLastMonth, endOfLastMonth) => {
+  try {
+    const newUsersThisMonth = await User.countDocuments({
+      createdAt: { $gte: startOfCurrentMonth, $lt: now },
+    });
+
+    // Số lượng người dùng mới trong tháng trước
+    const newUsersLastMonth = await User.countDocuments({
+      createdAt: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
+    });
+
+    // Số lượng người dùng đăng nhập trong tháng này
+    const loginsThisMonth = await User.countDocuments({
+      lastLogin: { $gte: startOfCurrentMonth, $lt: now },
+    });
+
+    // Số lượng người dùng đăng nhập trong tháng trước
+    const loginsLastMonth = await User.countDocuments({
+      lastLogin: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
+    });
+    const newUserPercentageChange =
+      newUsersLastMonth === 0 ? 100 : ((newUsersThisMonth - newUsersLastMonth) / newUsersLastMonth) * 100;
+    const loginUserPercentageChange =
+      loginsLastMonth === 0 ? 100 : ((loginsThisMonth - loginsLastMonth) / loginsLastMonth) * 100;
+    return {
+      newUsersThisMonth,
+      loginsThisMonth,
+      newUserPercentageChange,
+      loginUserPercentageChange,
+    };
+  } catch (err) {
+    console.error('Lỗi:', err);
+  }
+};
 module.exports = {
   createUser,
   queryUsers,
@@ -86,4 +142,7 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  createdLastTimeCount,
+  lastLoginLastTimeCount,
+  createdTotal,
 };

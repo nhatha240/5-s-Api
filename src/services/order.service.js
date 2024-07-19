@@ -10,7 +10,7 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<{results: Array, nextCursor: string, hasNextPage: boolean}>}
  */
 
-const queryOrders = async (filter = {status: 1}, options = { cursor: null, limit: 10 }) => {
+const queryOrders = async (filter = { status: 1 }, options = { cursor: null, limit: 10 }) => {
   let newFilter = filter;
   if (options.cursor) {
     newFilter = { ...newFilter, _id: { $gt: options.cursor } };
@@ -69,9 +69,141 @@ const deleteOrderById = async (orderId) => {
   return order;
 };
 
+const thongKeOrder = async (time) => {
+  try {
+    const today = new Date();
+    const result = await Order.aggregate([
+      {
+        $match: {
+          time: { $gte: time, $lt: today },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$time' },
+          },
+          totalAmount: { $sum: '$total' },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const totalsByDay = result.reduce((acc, curr) => {
+      acc[curr._id] = curr.totalAmount;
+      return acc;
+    }, {});
+    return totalsByDay;
+  } catch (err) {
+    console.error('Lỗi:', err);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
+
+const totalMonth = async (now, startOfCurrentMonth, startOfLastMonth, endOfLastMonth) => {
+  try {
+    const currentMonthTotal = await Order.aggregate([
+      {
+        $match: {
+          time: { $gte: startOfCurrentMonth, $lt: now },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$total' },
+        },
+      },
+    ]);
+
+    const lastMonthTotal = await Order.aggregate([
+      {
+        $match: {
+          time: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$total' },
+        },
+      },
+    ]);
+
+    const currentMonthAmount = currentMonthTotal.length > 0 ? currentMonthTotal[0].totalAmount : 0;
+    const lastMonthAmount = lastMonthTotal.length > 0 ? lastMonthTotal[0].totalAmount : 0;
+
+    const percentageChange = lastMonthAmount === 0 ? 100 : ((currentMonthAmount - lastMonthAmount) / lastMonthAmount) * 100;
+
+    console.log('Current month total:', currentMonthAmount);
+    console.log('Last month total:', lastMonthAmount);
+    console.log('Percentage change:', percentageChange);
+
+    return {
+      currentMonthAmount,
+      lastMonthAmount,
+      percentageChange,
+    };
+  } catch (err) {
+    console.error('Lỗi:', err);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
+
+const ordersTotle = async (time) => {
+  try {
+    const result = await Order.aggregate([
+      {
+        $match: {
+          time: { $gte: time },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$total' },
+        },
+      },
+    ]);
+
+    return result.length > 0 ? result[0].totalAmount : 0;
+  } catch (err) {
+    console.error('Lỗi:', err);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
+
+const getMonthlyOrderStatsAndCompare = async (now, startOfCurrentMonth, startOfLastMonth, endOfLastMonth) => {
+  try {
+    const ordersThisMonth = await Order.countDocuments({
+      createdAt: { $gte: startOfCurrentMonth, $lt: now },
+    });
+
+    // Tổng số đơn hàng trong tháng trước
+    const ordersLastMonth = await Order.countDocuments({
+      createdAt: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
+    });
+
+    const orderPercentageChange =
+      ordersLastMonth === 0 ? 100 : ((ordersThisMonth - ordersLastMonth) / ordersLastMonth) * 100;
+    return {
+      ordersThisMonth,
+      ordersLastMonth,
+      orderPercentageChange,
+    };
+  } catch (err) {
+    console.error('Lỗi:', err);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
 module.exports = {
   queryOrders,
   getOrderById,
   updateOrderById,
   deleteOrderById,
+  thongKeOrder,
+  totalMonth,
+  getMonthlyOrderStatsAndCompare,
 };
