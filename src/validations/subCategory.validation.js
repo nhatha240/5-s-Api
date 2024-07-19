@@ -5,8 +5,8 @@ const { objectId } = require('./custom.validation');
  */
 const createSubCategory = {
   body: Joi.object().keys({
-    name: Joi.string().required(),
     idCategory: Joi.string().custom(objectId),
+    name: Joi.string().required(),
   }),
 };
 

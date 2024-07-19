@@ -83,7 +83,7 @@ const deleteCategoryById = async (categoryId) => {
 
 const createSubCategory = async (subCategoryBody) => {
   if (await SubCategory.isNameTaken(subCategoryBody.name)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'SubCategory already taken');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'SubCategory name already taken');
   }
   return SubCategory.create(subCategoryBody);
 };
@@ -118,7 +118,7 @@ const updateSubCategoryById = async (subCategoryId, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
   }
   if (updateBody.name && (await SubCategory.isNameTaken(updateBody.name, subCategoryId))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'SubCategory already taken');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'SubCategory name already taken');
   }
   Object.assign(subCategory, updateBody);
   await subCategory.save();
@@ -138,6 +138,15 @@ const deleteSubCategoryById = async (subCategoryId) => {
   await subCategory.remove();
   return subCategory;
 }
+
+const removeSubCategory = async (subCategoryId) => {
+  const subCategory = await getSubCategoryById(subCategoryId);
+  if (!subCategory) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
+  }
+  await subCategory.remove();
+  return subCategory;
+};
 
 module.exports = {
   createCategory,

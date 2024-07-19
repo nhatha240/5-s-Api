@@ -87,11 +87,11 @@ router.delete('/delete-category/:id', admin('manageShop'), validate(categoryVali
 /*
   * Subcategories routes
   */
-router.post('/create-subcategory', admin('manageShop'), validate(subCategoryValidation.deleteCategory), adminController.createSubCategory);
-router.get('/get-subcategories', admin('manageShop'), validate(subCategoryValidation.getCategories), adminController.getSubCategories);
-router.get('/get-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.getCategory), adminController.getSubCategory);
-router.put('/update-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.updateCategory), adminController.updateSubCategory);
-router.delete('/delete-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.deleteCategory), adminController.deleteSubCategory);
+router.post('/create-subcategory', admin('manageShop'), validate(subCategoryValidation.createSubCategory), adminController.createSubCategory);
+router.get('/get-subcategories', admin('manageShop'), adminController.getSubCategories);
+router.get('/get-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.getSubCategory), adminController.getSubCategory);
+router.put('/update-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.updateSubCategory), adminController.updateSubCategory);
+router.delete('/delete-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.deleteSubCategory), adminController.deleteSubCategory);
 
 
 module.exports = router;

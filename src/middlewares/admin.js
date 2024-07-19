@@ -8,7 +8,7 @@ const verifyAdmin = (req, resolve, reject, requiredRights) => async (err, user, 
     return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
   }
   req.admin = user;
-
+  console.log(req.body);
   if (requiredRights.length) {
     const userRights = checkRoles.get(user.role);
     const hasRequiredRights = requiredRights.every((requiredRight) => userRights.includes(requiredRight));
