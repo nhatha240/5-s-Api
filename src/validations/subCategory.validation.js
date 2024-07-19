@@ -27,9 +27,7 @@ const getSubCategories = {
  */
 const getSubCategory = {
   params: Joi.object().keys({
-    subCategoryId: Joi.string
-      .custom(objectId)
-      .required(),
+    subCategoryId: Joi.string().custom(objectId).required(),
   }),
 };
 
@@ -39,9 +37,7 @@ const getSubCategory = {
 
 const updateSubCategory = {
   params: Joi.object().keys({
-    subCategoryId: Joi.string
-      .custom(objectId)
-      .required(),
+    subCategoryId: Joi.string().required().custom(objectId),
   }),
   body: Joi.object().keys({
     name: Joi.string(),
@@ -54,9 +50,7 @@ const updateSubCategory = {
  */
 const deleteSubCategory = {
   params: Joi.object().keys({
-    subCategoryId: Joi.string
-      .custom(objectId)
-      .required(),
+    subCategoryId: Joi.string().required().custom(objectId),
   }),
 };
 

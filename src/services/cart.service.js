@@ -3,12 +3,12 @@ const { Cart } = require('../models');
 // const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 
-const getCart = catchAsync(async (userId) => {
+const getCart = async (userId) => {
   const carts = await Cart.findOne({ idUser: userId });
   return carts;
-});
+};
 
-const addCart = catchAsync(async (userId, productId, quantity) => {
+const addCart = async (userId, productId, quantity) => {
   const cart = await Cart.findOne({ idUser: userId });
   if (!cart) {
     const newCart = new Cart({ idUser: userId });
@@ -26,9 +26,9 @@ const addCart = catchAsync(async (userId, productId, quantity) => {
     cart.save();
     return cart;
   }
-});
+};
 
-const updateCart = catchAsync(async (userId, productId, quantity) => {
+const updateCart = async (userId, productId, quantity) => {
   const cart = await Cart.findOne({ idUser: userId });
   const product = cart.listProduct.find((product) => product.product === productId);
   if (!product) {
@@ -39,17 +39,24 @@ const updateCart = catchAsync(async (userId, productId, quantity) => {
   product.quantity = quantity;
   cart.save();
   return cart;
-});
+};
 
-const deleteCart = catchAsync(async (userId, productId) => {
+const deleteCart = async (userId, productId) => {
   const cart = await Cart.findOne({ idUser: userId });
   if (cart) {
     cart.listProduct = cart.listProduct.filter((product) => product.product !== productId);
     await cart.save();
   }
-});
+};
 
-
+const thongKeProduct = async (time) => {
+  const now = new Date();
+  const startOfDay = new Date(time.getFullYear(), time.getMonth(), time.getDate());
+  const cartsAddedToday  = await Cart.countDocuments({
+    updatedAt: { $gte: startOfDay, $lt: now }
+  });
+  return cartsAddedToday;
+}
 
 module.exports = {
   getCart,

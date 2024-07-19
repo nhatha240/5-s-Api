@@ -71,6 +71,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pm2": "^5.4.0",
+    "stripe": "^16.2.0",
     "superagent": "^9.0.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",

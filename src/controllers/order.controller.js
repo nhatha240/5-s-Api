@@ -3,7 +3,9 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { orderService } = require('../services');
 const pick = require('../utils/pick');
-
+const stripe = require('stripe')(
+  'sk_test_51NSujGIqygGkBQRFuIdSfUhPmCpLYN9NarOtgJ8z3yPMBkk3PVjSTqyoKe9Y6fO2RONssakxx70ZNN4EyqGGPMhQ007PzwcA2r'
+);
 const addOrder = catchAsync(async (req, res) => {
   const order = await orderService.addOrder(req.user._id, req.body.productId, req.body.quantity);
   res.status(httpStatus.CREATED).send(order);
@@ -22,8 +24,58 @@ const paymentOrder = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const webhookPayment = catchAsync(async (req, res) => {
+  const endpointSecret = 'whsec_ae07bb077a33e2f10e340969384f62ef8e85226f8e12309f0bd1b7973cd3aa24';
+  const sig = req.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    console.log(event);
+  } catch (err) {
+    console.log(req.body);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'payment_intent.succeeded':
+      const paymentIntentSucceeded = event.data.object;
+      // Then define and call a function to handle the event payment_intent.succeeded
+      break;
+      case 'subscription_schedule.canceled':
+      const subscriptionScheduleCanceled = event.data.object;
+      // Then define and call a function to handle the event subscription_schedule.canceled
+      break;
+      case 'invoice.upcoming':
+        const invoiceUpcoming = event.data.object;
+        // Then define and call a function to handle the event invoice.upcoming
+        break;
+        case 'charge.captured':
+      const chargeCaptured = event.data.object;
+      // Then define and call a function to handle the event charge.captured
+      break;
+      case 'invoice.payment_succeeded':
+      const invoicePaymentSucceeded = event.data.object;
+      // Then define and call a function to handle the event invoice.payment_succeeded
+      break;
+    case 'payment_intent.payment_failed':
+      const paymentIntentPaymentFailed = event.data.object;
+      // Then define and call a function to handle the event payment_intent.payment_failed
+      break;
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  response.send();
+});
+
 module.exports = {
   addOrder,
   getOrders,
   paymentOrder,
+  webhookPayment,
 };
