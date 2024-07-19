@@ -50,8 +50,8 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
  * @returns {Promise<Product>}
  */
 
-async function createProduct(shopID, productBody) {
-  const updatedProductBody = { ...productBody, idShop: shopID };
+async function createProduct( productBody) {
+  const updatedProductBody = { ...productBody };
   const product = await Products.create(updatedProductBody);
   return product;
 }
@@ -82,7 +82,7 @@ async function updateProduct(admin, productId, updateBody) {
   if (!product) {
     throw new Error('Product not found');
   }
-  if (admin.role !== 'admin' && !admin.shops.includes(product.idShop)) {
+  if (admin.role !== 'admin') {
     throw new Error('you are not allowed to delete this product');
   }
   Object.assign(product, updateBody);
@@ -100,10 +100,6 @@ async function updateProduct(admin, productId, updateBody) {
 async function deleteProductById(admin, productId) {
   const product = await getProductById(productId);
   if (!product) {
-    throw new Error('you are not allowed to delete this product');
-  }
-
-  if (admin.role !== 'admin' && !admin.shops.includes(product.idShop)) {
     throw new Error('you are not allowed to delete this product');
   }
   await product.deleteOne();

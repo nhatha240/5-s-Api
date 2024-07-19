@@ -45,7 +45,6 @@ const adminsSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    shops: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Shop' }],
   },
   {
     timestamps: true,

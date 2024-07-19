@@ -9,7 +9,6 @@ const allRoles = {
     'SuperAdmin',
     'createDelivery',
   ],
-  shop: ['viewUsers', 'manageOrder', 'manageShop', 'createDelivery'],
   delivery: ['manageOrder'],
 };
 

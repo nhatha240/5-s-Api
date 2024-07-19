@@ -10,8 +10,6 @@ const productsSchema = new Schema(
     description: String,
     originalPrice: { type: Number },
     price: { type: Number, required: true },
-    priceSalePercent: Number,
-    idShop: { type: Schema.Types.ObjectId, ref: 'Shop' },
     idCategory: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
     size: [{ type: String }],
     idSubCategory: [{ type: Schema.Types.ObjectId, ref: 'SubCategory' }],
@@ -19,8 +17,7 @@ const productsSchema = new Schema(
     isSale: { type: Boolean, default: false },
     isBestSeller: { type: Boolean, default: false },
     quantity: { type: Number, default: 0 },
-    sku: { type: String, default: '' },
-    brand: { type: String, default: 'no brand' },
+    color: [{ type: String, default: 'red' }],
     material: [{ type: String }],
   },
   {

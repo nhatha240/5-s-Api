@@ -27,11 +27,11 @@ router.delete('/delete-admin/:id', admin('SuperAdmin'), adminController.deleteAd
 /*
  * Shop routes
  */
-router.post('/create-shop', uploadImage('image'), validate(shopValidation.createShop), admin('manageShop'), shopController.createShop);
-router.get('/get-shops', admin('manageShop'), adminController.getShops);
-router.get('/get-shop/:shopId', validate(shopValidation.getShop), admin('manageShop'), adminController.getShopId);
-router.put('/update-shop/:id', uploadImage('image'), admin('manageShop'), validate(shopValidation.updateShop), adminController.updateShop);
-router.delete('/delete-shop/:id', admin('manageShop'), adminController.deleteShop);
+// router.post('/create-shop', uploadImage('image'), validate(shopValidation.createShop), admin('manageShop'), shopController.createShop);
+// router.get('/get-shops', admin('manageShop'), adminController.getShops);
+// router.get('/get-shop/:shopId', validate(shopValidation.getShop), admin('manageShop'), adminController.getShopId);
+// router.put('/update-shop/:id', uploadImage('image'), admin('manageShop'), validate(shopValidation.updateShop), adminController.updateShop);
+// router.delete('/delete-shop/:id', admin('manageShop'), adminController.deleteShop);
 /*
  * Product routes
  */

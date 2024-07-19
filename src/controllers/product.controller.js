@@ -2,14 +2,10 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { productService, shopService } = require('../services');
+const { productService } = require('../services');
 
 const createProduct = catchAsync(async (req, res) => {
-  const shop = shopService.getShopById(req.shopID);
-  if (!shop) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
-  }
-  const product = await productService.createProduct(req.shopID, req.params.productId, req.body, req.admin._id);
+  const product = await productService.createProduct( req.params.productId, req.body, req.admin._id);
   res.status(httpStatus.CREATED).send(product);
 });
 
@@ -39,12 +35,8 @@ const getProductById = catchAsync(async (req, res) => {
  * @returns {Promise<Product>}
  */
 const updateProduct = catchAsync(async (req, res) => {
-  const shop = shopService.getShopById(req.shopID);
 
-  if (!shop) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
-  }
-  const product = await productService.updateProduct(req.shopID, req.params.productId, req.body, req.admin._id);
+  const product = await productService.updateProduct( req.params.productId, req.body, req.admin._id);
   res.send(product);
 });
 
@@ -55,11 +47,6 @@ const updateProduct = catchAsync(async (req, res) => {
  */
 
 const deleteProducts = catchAsync(async (req, res) => {
-  const shop = shopService.getShopById(req.shopID);
-  if (!shop) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
-  }
-
   // The productService.deleteProductById function is called with the product ID from the request parameters.
   await productService.deleteProductById(req.params.productId, req.admin);
   // If the product is successfully deleted, an HTTP status of 204 (No Content) is sent back to the client.
