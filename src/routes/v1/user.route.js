@@ -8,14 +8,11 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
-  .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
-
-router
-  .route('/:userId')
-  .get(auth(), validate(userValidation.getUser), userController.getUser)
+  .post(auth(), validate(userValidation.createUser), userController.createUser)
+  .get(auth(), validate(userValidation.getUsers), userController.getUser)
   .patch(auth(), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
+
 router.post('like', auth(), validate(userValidation.like), userController.likeProduct);
 router.post('unlike', auth(), validate(userValidation.unlike), userController.unlikeProduct);
 router.post('comment', auth(), validate(userValidation.comment), commentsController.addComment);
@@ -27,7 +24,6 @@ router.post('add-order', auth(), validate(orderValidation.addOrder), orderContro
 router.post('get-order', auth(), orderController.getOrders);
 router.post('order', auth(), validate(orderValidation.order), orderController.getOrders);
 router.post('payment', auth(), validate(orderValidation.orderPayment), orderController.paymentOrder);
-router.post('webhook', orderController.paymentOrder);
 
 module.exports = router;
 
