@@ -224,10 +224,9 @@ const updateSubCategory = catchAsync(async (req, res) => {
  */
 
 const deleteSubCategory = catchAsync(async (req, res) => {
-  await categoryService.removeSubCategory(req.params.id);
+  await categoryService.deleteSubCategoryById(req.params.id);
   res.status(httpStatus.NO_CONTENT).send();
-}
-);
+});
 module.exports = {
   getAdmins,
   getAdminId,
