@@ -36,21 +36,21 @@ router.post(
   admin(),
   productController.createProduct
 );
-router.get('/get-products', admin(), adminController.getProducts);
-router.get('/get-product/:id', validate(productValidation.getProduct), admin(), adminController.getProduct);
+router.get('/get-products', admin(), productController.getProducts);
+router.get('/get-product/:id', validate(productValidation.getProduct), admin(), productController.getProductById);
 console.log('productValidation.updateProduct');
 router.put(
   '/update-product/:id',
   uploadImage('array'),
   validate(productValidation.updateProduct),
   admin(),
-  adminController.updateProduct
+  productController.updateProduct
 );
 router.delete(
   '/delete-product/:id',
   validate(productValidation.deleteProduct),
   admin(),
-  adminController.deleteProduct
+  productController.deleteProduct
 );
 /*
  * user routes

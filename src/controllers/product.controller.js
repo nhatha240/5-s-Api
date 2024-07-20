@@ -61,11 +61,11 @@ const updateProduct = catchAsync(async (req, res) => {
  * @returns {Promise<Product>}
  */
 
-const deleteProducts = catchAsync(async (req, res) => {
+const deleteProduct = catchAsync(async (req, res) => {
   // The productService.deleteProductById function is called with the product ID from the request parameters.
   await productService.deleteProductById(req.params.productId, req.admin);
   // If the product is successfully deleted, an HTTP status of 204 (No Content) is sent back to the client.
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-module.exports = { getProducts, createProduct, getProductById, updateProduct, deleteProducts };
+module.exports = { getProducts, createProduct, getProductById, updateProduct, deleteProduct };
