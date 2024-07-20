@@ -8,7 +8,7 @@ const uploadImage = require('../../middlewares/upload');
 const router = express.Router();
 
 router.post('/login', validate(authValidation.login), authController.login);
-router.post('/register', uploadImage('image'),  validate(authValidation.register), authController.register);
+router.post('/register', uploadImage('single'),  validate(authValidation.register), authController.register);
 router.post('/logout', validate(authValidation.logout), authController.logout);
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authController.refreshTokens);
 router.post('/forgot-password', validate(authValidation.forgotPassword), authController.forgotPassword);

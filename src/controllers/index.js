@@ -8,3 +8,4 @@ module.exports.authAdminController = require('./authAdmin.controller');
 module.exports.commentsController = require('./comments.controller.js');
 module.exports.cartController = require('./cart.controller');
 module.exports.orderController = require('./order.controller');
+module.exports.publicApiController = require('./publicApi.controller');

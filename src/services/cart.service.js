@@ -1,7 +1,6 @@
 // const httpStatus = require('http-status');
 const { Cart } = require('../models');
 // const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
 
 const getCart = async (userId) => {
   const carts = await Cart.findOne({ idUser: userId });

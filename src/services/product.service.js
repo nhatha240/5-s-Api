@@ -50,10 +50,15 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
  * @returns {Promise<Product>}
  */
 
-async function createProduct( productBody) {
-  const updatedProductBody = { ...productBody };
-  const product = await Products.create(updatedProductBody);
-  return product;
+async function createProduct(productBody) {
+  try {
+    console.log('productBody', productBody);
+    const product = await Products.create(productBody);
+    return product;
+  } catch (error) {
+    console.log('error crea te', error);
+    throw new Error('Error creating product', error);
+  }
 }
 
 /**
@@ -211,11 +216,11 @@ const shopDeleteProduct = async (userID, productID) => {
 };
 const likeProduct = async (userId, productId) => {
   return ProductLike.create({ userId: userId, productId: productId });
-}
+};
 
 const unlikeProduct = async (userId, productId) => {
   return ProductLike.deleteOne({ userId: userId, productId: productId });
-}
+};
 module.exports = {
   queryProducts,
   createProduct,

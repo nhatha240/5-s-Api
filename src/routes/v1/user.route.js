@@ -9,9 +9,9 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth(), uploadImage('image'), validate(userValidation.createUser), userController.createUser)
+  .post(auth(), uploadImage('single'), validate(userValidation.createUser), userController.createUser)
   .get(auth(), validate(userValidation.getUsers), userController.getUser)
-  .patch(auth(), uploadImage('image'), validate(userValidation.updateUser), userController.updateUser)
+  .patch(auth(), uploadImage('single'), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
 
 router.post('like', auth(), validate(userValidation.like), userController.likeProduct);

@@ -5,7 +5,23 @@ const catchAsync = require('../utils/catchAsync');
 const { productService } = require('../services');
 
 const createProduct = catchAsync(async (req, res) => {
-  const product = await productService.createProduct( req.params.productId, req.body, req.admin._id);
+  const body = pick(req.body, [
+    'name',
+    'image',
+    'description',
+    'discountPrice',
+    'price',
+    'category',
+    'status',
+    'isSale',
+    'isBestSeller',
+    'quantity',
+    'tags',
+  ]);
+  body.image = body.image ?? ['uploads/products/default.jpg'];
+  body.options = pick(req.body, ['size', 'color']);
+  console.log('body', body);
+  const product = await productService.createProduct(body);
   res.status(httpStatus.CREATED).send(product);
 });
 
@@ -35,8 +51,7 @@ const getProductById = catchAsync(async (req, res) => {
  * @returns {Promise<Product>}
  */
 const updateProduct = catchAsync(async (req, res) => {
-
-  const product = await productService.updateProduct( req.params.productId, req.body, req.admin._id);
+  const product = await productService.updateProduct(req.params.productId, req.body, req.admin._id);
   res.send(product);
 });
 

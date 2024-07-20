@@ -1,14 +1,14 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
-const { authValidation, shopValidation, productValidation, categoryValidation, subCategoryValidation } = require('../../validations');
-const { authAdminController, adminController, shopController } = require('../../controllers');
+const { authValidation, productValidation, categoryValidation } = require('../../validations');
+const { authAdminController, adminController, productController } = require('../../controllers');
 const admin = require('../../middlewares/admin');
 const uploadImage = require('../../middlewares/upload');
 
 const router = express.Router();
 
 router.post('/login', validate(authValidation.login), authAdminController.login);
-router.post('/register', uploadImage('image'), validate(authValidation.registerAdmin), admin('SuperAdmin'), authAdminController.register);
+router.post('/register', uploadImage('single'), validate(authValidation.registerAdmin), admin('SuperAdmin'), authAdminController.register);
 router.post('/logout', validate(authValidation.logout), authAdminController.logout);
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authAdminController.refreshTokens);
 router.post('/forgot-password', validate(authValidation.forgotPassword), authAdminController.forgotPassword);
@@ -22,33 +22,26 @@ router.post('/change-password', admin(), validate(authValidation.changePassword)
 
 router.get('/get-admins', admin('SuperAdmin'), adminController.getAdmins);
 router.get('/get-admin/:id', admin('SuperAdmin'), adminController.getAdminId);
-router.put('/update-admin/:id', uploadImage('image'), admin('SuperAdmin'), adminController.updateAdmin);
+router.put('/update-admin/:id', uploadImage('single'), admin('SuperAdmin'), adminController.updateAdmin);
 router.delete('/delete-admin/:id', admin('SuperAdmin'), adminController.deleteAdmin);
-/*
- * Shop routes
- */
-// router.post('/create-shop', uploadImage('image'), validate(shopValidation.createShop), admin('manageShop'), shopController.createShop);
-// router.get('/get-shops', admin('manageShop'), adminController.getShops);
-// router.get('/get-shop/:shopId', validate(shopValidation.getShop), admin('manageShop'), adminController.getShopId);
-// router.put('/update-shop/:id', uploadImage('image'), admin('manageShop'), validate(shopValidation.updateShop), adminController.updateShop);
-// router.delete('/delete-shop/:id', admin('manageShop'), adminController.deleteShop);
+
 /*
  * Product routes
  */
 
 router.post(
-  '/create-product/:shopID',
-  uploadImage('image'),
+  '/create-product/',
+  uploadImage('array'),
   validate(productValidation.createProduct),
-  admin('manageShop'),
-  adminController.createProduct
+  admin(),
+  productController.createProduct
 );
-router.get('/get-products', admin('manageShop'), adminController.getProducts);
-router.get('/get-product/:id', validate(productValidation.getProduct), admin('manageShop'), adminController.getProduct);
+router.get('/get-products', admin(), adminController.getProducts);
+router.get('/get-product/:id', validate(productValidation.getProduct), admin(), adminController.getProduct);
 console.log('productValidation.updateProduct');
 router.put(
   '/update-product/:id',
-  uploadImage('image'),
+  uploadImage('array'),
   validate(productValidation.updateProduct),
   admin(),
   adminController.updateProduct
@@ -56,7 +49,7 @@ router.put(
 router.delete(
   '/delete-product/:id',
   validate(productValidation.deleteProduct),
-  admin('manageShop'),
+  admin(),
   adminController.deleteProduct
 );
 /*
@@ -64,34 +57,34 @@ router.delete(
  */
 router.get('/get-user', admin('SuperAdmin'), adminController.getUser);
 router.get('/get-user/:userID', admin('SuperAdmin'), adminController.getUserId);
-router.put('/update-user/:userID', uploadImage('image'), admin('SuperAdmin'), adminController.updateUser);
+router.put('/update-user/:userID', uploadImage('single'), admin('SuperAdmin'), adminController.updateUser);
 router.delete('/delete-user/:userID', admin('SuperAdmin'), adminController.deleteUser);
 /*
  * Order routes
  */
-router.get('/get-orders', admin('manageShop'), adminController.getOrders);
-router.get('/get-order/:id', admin('manageShop'), adminController.getOrder);
-router.put('/update-order/:id', admin('manageShop'), adminController.updateOrder);
-router.delete('/delete-order/:id', admin('manageShop'), adminController.deleteOrder);
+router.get('/get-orders', admin(), adminController.getOrders);
+router.get('/get-order/:id', admin(), adminController.getOrder);
+router.put('/update-order/:id', admin(), adminController.updateOrder);
+router.delete('/delete-order/:id', admin(), adminController.deleteOrder);
 
 /*
  * categories routes
  */
 
-router.post('/create-category', admin('manageShop'), validate(categoryValidation.createCategory), adminController.createCategory);
-router.get('/get-categories', admin('manageShop'), validate(categoryValidation.getCategories), adminController.getCategories);
-router.get('/get-category/:id', admin('manageShop'), validate(categoryValidation.getCategory), adminController.getCategory);
-router.put('/update-category/:id', admin('manageShop'), validate(categoryValidation.updateCategory), adminController.updateCategory);
-router.delete('/delete-category/:id', admin('manageShop'), validate(categoryValidation.deleteCategory), adminController.deleteCategory);
+router.post('/create-category',uploadImage('single'), admin(), validate(categoryValidation.createCategory), adminController.createCategory);
+router.get('/get-categories', admin(), validate(categoryValidation.getCategories), adminController.getCategories);
+router.get('/get-category/:id', admin(), validate(categoryValidation.getCategory), adminController.getCategory);
+router.put('/update-category/:id',uploadImage('single'), admin(), validate(categoryValidation.updateCategory), adminController.updateCategory);
+router.delete('/delete-category/:id', admin(), validate(categoryValidation.deleteCategory), adminController.deleteCategory);
 
-/*
-  * Subcategories routes
-  */
-router.post('/create-subcategory', admin('manageShop'), validate(subCategoryValidation.createSubCategory), adminController.createSubCategory);
-router.get('/get-subcategories', admin('manageShop'), adminController.getSubCategories);
-router.get('/get-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.getSubCategory), adminController.getSubCategory);
-router.put('/update-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.updateSubCategory), adminController.updateSubCategory);
-router.delete('/delete-subcategory/:id', admin('manageShop'), validate(subCategoryValidation.deleteSubCategory), adminController.deleteSubCategory);
+// /*
+//   * Subcategories routes
+//   */
+// router.post('/create-subcategory', admin(), validate(subCategoryValidation.createSubCategory), adminController.createSubCategory);
+// router.get('/get-subcategories', admin(), adminController.getSubCategories);
+// router.get('/get-subcategory/:id', admin(), validate(subCategoryValidation.getSubCategory), adminController.getSubCategory);
+// router.put('/update-subcategory/:id', admin(), validate(subCategoryValidation.updateSubCategory), adminController.updateSubCategory);
+// router.delete('/delete-subcategory/:id', admin(), validate(subCategoryValidation.deleteSubCategory), adminController.deleteSubCategory);
 
 
 module.exports = router;

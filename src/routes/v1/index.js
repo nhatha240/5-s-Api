@@ -6,6 +6,7 @@ const userRoute = require('./user.route');
 const docsRoute = require('./docs.route');
 const productsRoute = require('./products.route');
 const thongKeRoute= require('./thongKe.route');
+const publicApiRoute= require('./publicApi.route');
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -34,7 +35,11 @@ const defaultRoutes = [
   {
     path: '/thongke',
     route: thongKeRoute,
+  }, {
+    path: '/',
+    route: publicApiRoute,
   },
+
 ];
 
 const devRoutes = [

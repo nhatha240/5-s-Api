@@ -8,26 +8,20 @@ const getProduct = {
 };
 
 const createProduct = {
-  params: Joi.object().keys({
-    shopID: Joi.required().custom(objectId),
-  }),
   body: Joi.object().keys({
     name: Joi.string().required(),
     image: Joi.string(),
     description: Joi.string().required(),
-    originalPrice: Joi.number(),
+    discountPrice: Joi.number(),
     price: Joi.number().required(),
-    priceSalePercent: Joi.number(),
-    idCategory: Joi.string().required(),
+    category: Joi.array().required(),
     size: Joi.array().required(),
-    idSubCategory: Joi.array(),
+    color: Joi.array(),
     status: Joi.string().required(),
     isSale: Joi.boolean(),
     isBestSeller: Joi.boolean(),
     quantity: Joi.number().required(),
-    sku: Joi.string(),
-    brand: Joi.string(),
-    material: Joi.array(),
+    tags: Joi.array(),
   }),
 };
 
@@ -38,21 +32,18 @@ const updateProduct = {
   body: Joi.object()
     .keys({
       name: Joi.string(),
-      image: Joi.string(),
+      image: Joi.array(),
       description: Joi.string(),
-      originalPrice: Joi.number(),
+      discountPrice: Joi.number(),
       price: Joi.number(),
-      priceSalePercent: Joi.number(),
-      idCategory: Joi.string(),
-      idSubCategory: Joi.array(),
-      status: Joi.string(),
+      category: Joi.array(),
+      size: Joi.array(),
+      color: Joi.array(),
+      status: Joi.string().valid('public', 'private'),
       isSale: Joi.boolean(),
       isBestSeller: Joi.boolean(),
       quantity: Joi.number(),
-      size: Joi.array(),
-      sku: Joi.string(),
-      brand: Joi.string(),
-      material: Joi.array(),
+      tags: Joi.array(),
     })
     .min(1),
 };

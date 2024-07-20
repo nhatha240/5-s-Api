@@ -4,7 +4,8 @@ const { objectId } = require('./custom.validation');
 const createCategory = {
   body: Joi.object().keys({
     name: Joi.string().required(),
-    idCategory: Joi.string().custom(objectId),
+    description: Joi.string(),
+    image: Joi.string(),
   }),
 };
 
@@ -19,7 +20,7 @@ const getCategories = {
 
 const getCategory = {
   params: Joi.object().keys({
-    categoryId: Joi.string().custom(objectId),
+    id: Joi.string().custom(objectId),
   }),
 };
 

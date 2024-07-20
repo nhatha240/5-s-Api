@@ -5,7 +5,9 @@ const { Schema } = mongoose;
 
 const categorySchema = new Schema({
   name: { type: String, required: true, unique: true },
-  idCategory: [{ type: Schema.Types.ObjectId, ref: 'SubCategory', required: true }],
+  description: { type: String },
+  image: { type: String },
+  itemsCount: { type: Number, default: 0 },
 });
 // add plugin that converts mongoose to json
 categorySchema.plugin(toJSON);

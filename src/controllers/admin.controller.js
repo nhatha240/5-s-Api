@@ -29,34 +29,6 @@ const deleteAdmin = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const getProducts = catchAsync(async (req, res) => {
-  const result = await productService.queryProducts();
-  res.send(result);
-});
-
-const createProduct = catchAsync(async (req, res) => {
-  const result = await productService.createProduct(req.params.shopID, req.body);
-  res.status(httpStatus.CREATED).send(result);
-});
-
-const getProduct = catchAsync(async (req, res) => {
-  const result = await productService.getProductById(req.params.id);
-  if (!result) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
-  }
-  res.send(result);
-});
-
-const updateProduct = catchAsync(async (req, res) => {
-  console.log('req.body', req.body);
-  const result = await productService.updateProduct(req.admin, req.params.id, req.body);
-  res.send(result);
-});
-
-const deleteProduct = catchAsync(async (req, res) => {
-  await productService.deleteProductById(req.admin, req.params.id);
-  res.status(httpStatus.NO_CONTENT).send();
-});
 
 const getUser = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
@@ -113,6 +85,7 @@ const deleteOrder = catchAsync(async (req, res) => {
  */
 
 const createCategory = catchAsync(async (req, res) => {
+  req.body.image = req.body.image ?? 'uploads/category/default.jpg';
   const result = await categoryService.createCategory(req.body);
   res.status(httpStatus.CREATED).send(result);
 });
@@ -163,59 +136,84 @@ const deleteCategory = catchAsync(async (req, res) => {
  * create subcategory controller
  */
 
-const createSubCategory = catchAsync(async (req, res) => {
-  const result = await categoryService.createSubCategory(req.body);
-  res.status(httpStatus.CREATED).send(result);
-});
+// const createSubCategory = catchAsync(async (req, res) => {
+//   const result = await categoryService.createSubCategory(req.body);
+//   res.status(httpStatus.CREATED).send(result);
+// });
 
 /**
  * get subcategories controller
  */
 
-const getSubCategories = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role', 'email', 'shop']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await categoryService.querySubCategories(filter, options);
-  res.send(result);
-});
+// const getSubCategories = catchAsync(async (req, res) => {
+//   const filter = pick(req.query, ['name', 'role', 'email', 'shop']);
+//   const options = pick(req.query, ['sortBy', 'limit', 'page']);
+//   const result = await categoryService.querySubCategories(filter, options);
+//   res.send(result);
+// });
 /**
  *
  * get subcategory by id controller
  */
 
-const getSubCategory = catchAsync(async (req, res) => {
-  const result = await categoryService.getSubCategoryById(req.params.id);
-  if (!result) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
-  }
-  res.send(result);
-});
-/**
- * update subcategory by id controller
- */
+// const getSubCategory = catchAsync(async (req, res) => {
+//   const result = await categoryService.getSubCategoryById(req.params.id);
+//   if (!result) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
+//   }
+//   res.send(result);
+// });
+// /**
+//  * update subcategory by id controller
+//  */
 
-const updateSubCategory = catchAsync(async (req, res) => {
-  const result = await categoryService.updateSubCategoryById(req.params.id, req.body);
-  res.send(result);
-});
+// const updateSubCategory = catchAsync(async (req, res) => {
+//   const result = await categoryService.updateSubCategoryById(req.params.id, req.body);
+//   res.send(result);
+// });
 /**
  * delete subcategory by id controller
  */
 
-const deleteSubCategory = catchAsync(async (req, res) => {
-  await categoryService.deleteSubCategoryById(req.params.id);
-  res.status(httpStatus.NO_CONTENT).send();
-});
+// const deleteSubCategory = catchAsync(async (req, res) => {
+//   await categoryService.deleteSubCategoryById(req.params.id);
+//   res.status(httpStatus.NO_CONTENT).send();
+// });
+
+// const getProducts = catchAsync(async (req, res) => {
+//   const result = await productService.queryProducts();
+//   res.send(result);
+// });
+
+// const createProduct = catchAsync(async (req, res) => {
+//   const result = await productService.createProduct(req.params.shopID, req.body);
+//   res.status(httpStatus.CREATED).send(result);
+// });
+
+// const getProduct = catchAsync(async (req, res) => {
+//   const result = await productService.getProductById(req.params.id);
+//   if (!result) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+//   }
+//   res.send(result);
+// });
+
+// const updateProduct = catchAsync(async (req, res) => {
+//   console.log('req.body', req.body);
+//   const result = await productService.updateProduct(req.admin, req.params.id, req.body);
+//   res.send(result);
+// });
+
+// const deleteProduct = catchAsync(async (req, res) => {
+//   await productService.deleteProductById(req.admin, req.params.id);
+//   res.status(httpStatus.NO_CONTENT).send();
+// });
+
 module.exports = {
   getAdmins,
   getAdminId,
   updateAdmin,
   deleteAdmin,
-  createProduct,
-  getProducts,
-  getProduct,
-  updateProduct,
-  deleteProduct,
   getUser,
   getUserId,
   updateUser,
@@ -229,9 +227,14 @@ module.exports = {
   getCategory,
   updateCategory,
   deleteCategory,
-  createSubCategory,
-  getSubCategories,
-  getSubCategory,
-  updateSubCategory,
-  deleteSubCategory,
+  // createProduct,
+  // getProducts,
+  // getProduct,
+  // updateProduct,
+  // deleteProduct,
+  // createSubCategory,
+  // getSubCategories,
+  // getSubCategory,
+  // updateSubCategory,
+  // deleteSubCategory,
 };

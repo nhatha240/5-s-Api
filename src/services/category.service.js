@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Category, SubCategory } = require('../models');
+const { Category } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -36,7 +36,7 @@ const queryCategories = async (filter, options) => {
  */
 
 const getCategoryById = async (id) => {
-  return Category.findById(id).populate('idCategory');
+  return Category.findById(id);
 };
 
 /**
@@ -75,77 +75,37 @@ const deleteCategoryById = async (categoryId) => {
   await category.remove();
   return category;
 };
-
 /**
- * create subcategory
- * @since 1.0.0
+ * Update category items count
+ * @param {string} categoryId
+ * @param {number} increment
  */
-
-const createSubCategory = async (subCategoryBody) => {
-  if (await SubCategory.isNameTaken(subCategoryBody.name)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'SubCategory name already taken');
+const updateItemsCount = async (categoryId, increment) => {
+  try {
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      throw new Error('Category not found');
+    }
+    category.itemsCount += increment;
+    const updatedCategory = await category.save();
+    console.log('Category updated:', updatedCategory);
+  } catch (err) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
   }
-  return SubCategory.create(subCategoryBody);
 };
 
 /**
- * query subcategories
+ * Query for categories
  * @since 1.0.0
+ * @param {Object} filter
+ * @param {Object} options
+ * @returns {Promise<QueryResult>}
  */
 
-const querySubCategories = async (filter, options) => {
-  const subCategories = await SubCategory.paginate(filter, options);
-  return subCategories;
-};
-
-/**
- * get subcategory by id
- * @since 1.0.0
- */
-
-const getSubCategoryById = async (id) => {
-  return SubCategory.findById(id);
-};
-
-/**
- * update subcategory by id
- * @since 1.0.0
- */
-
-const updateSubCategoryById = async (subCategoryId, updateBody) => {
-  const subCategory = await getSubCategoryById(subCategoryId);
-  if (!subCategory) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
-  }
-  if (updateBody.name && (await SubCategory.isNameTaken(updateBody.name, subCategoryId))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'SubCategory name already taken');
-  }
-  Object.assign(subCategory, updateBody);
-  await subCategory.save();
-  return subCategory;
-}
-
-/**
- * delete subcategory by id
- * @since 1.0.0
- */
-
-const deleteSubCategoryById = async (subCategoryId) => {
-  const subCategory = await getSubCategoryById(subCategoryId);
-  if (!subCategory) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
-  }
-  await subCategory.remove();
-  return subCategory;
-}
-
-const removeSubCategory = async (subCategoryId) => {
-  const subCategory = await getSubCategoryById(subCategoryId);
-  if (!subCategory) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
-  }
-  await subCategory.remove();
-  return subCategory;
+const publicCategory = async (filter, options) => {
+  options.select = '-itemsCount';
+  const categories = await Category.paginate(filter, options);
+  return categories;
 };
 
 module.exports = {
@@ -154,9 +114,6 @@ module.exports = {
   getCategoryById,
   updateCategoryById,
   deleteCategoryById,
-  createSubCategory,
-  querySubCategories,
-  getSubCategoryById,
-  updateSubCategoryById,
-  deleteSubCategoryById,
+  updateItemsCount,
+  publicCategory,
 };

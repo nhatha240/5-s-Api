@@ -1,5 +1,3 @@
- 
-
 const paginate = (schema) => {
   /**
    * @typedef {Object} QueryResult
@@ -48,8 +46,13 @@ const paginate = (schema) => {
           populateOption
             .split('.')
             .reverse()
-            .reduce((a, b) => ({ path: b, populate: a }))
+            .reduce((a, b) => ({ path: b, populate: a })),
         );
+      });
+    }
+    if (options.select) {
+      options.select.split(',').forEach((selectOption) => {
+        docsPromise = docsPromise.select(selectOption);
       });
     }
 

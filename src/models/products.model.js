@@ -6,23 +6,27 @@ const { Schema } = mongoose;
 const productsSchema = new Schema(
   {
     name: { type: String, required: true },
-    image: String,
+    image: [{ type: String }],
     description: String,
-    originalPrice: { type: Number },
+    discountPrice: { type: Number },
     price: { type: Number, required: true },
-    idCategory: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
+    category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
     size: [{ type: String }],
-    idSubCategory: [{ type: Schema.Types.ObjectId, ref: 'SubCategory' }],
-    status: { type: String, enum: ['active', 'Available', 'inactive'], default: 'active' },
+    status: { type: String, enum: ['publish', 'private', 'outStock'], default: 'private' },
     isSale: { type: Boolean, default: false },
     isBestSeller: { type: Boolean, default: false },
     quantity: { type: Number, default: 0 },
-    color: [{ type: String, default: 'red' }],
-    material: [{ type: String }],
+    tags: [{ type: String }],
+    options: [
+      {
+        size: [{ type: String }],
+        color: [{ type: String }],
+      },
+    ],
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 productsSchema.plugin(toJSON);
