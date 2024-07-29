@@ -23,7 +23,7 @@ const approveComment = catchAsync(async (commentId) => {
 const updateComment = catchAsync(async (commentId, bodyUpdate) => {
   const comment = await ProductComment.findOne({ _id: commentId });
   if (!comment) {
-   throw new Error('Comment not found');
+    throw new Error('Comment not found');
   }
   Object.assign(comment, bodyUpdate);
 

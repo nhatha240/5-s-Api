@@ -7,7 +7,7 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<Admins>}
  */
 const getAdminByEmail = async (email) => {
-  return Admins.findOne({ email }).populate('shops').exec();
+  return Admins.findOne({ email }).exec();
 };
 
 const createAdmin = async (body) => {
@@ -20,7 +20,7 @@ const createAdmin = async (body) => {
 };
 
 const getAdminById = async (adminId) => {
-  return Admins.findOne({ _id: adminId }).populate('shops').exec();
+  return Admins.findOne({ _id: adminId }).exec();
 };
 
 const updateAdminById = async (adminId, updateBody) => {

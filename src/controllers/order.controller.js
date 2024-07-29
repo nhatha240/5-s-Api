@@ -41,32 +41,32 @@ const webhookPayment = catchAsync(async (req, res) => {
 
   // Handle the event
   switch (event.type) {
-    case 'payment_intent.succeeded':
-      const paymentIntentSucceeded = event.data.object;
-      // Then define and call a function to handle the event payment_intent.succeeded
-      break;
-      case 'subscription_schedule.canceled':
-      const subscriptionScheduleCanceled = event.data.object;
-      // Then define and call a function to handle the event subscription_schedule.canceled
-      break;
-      case 'invoice.upcoming':
-        const invoiceUpcoming = event.data.object;
-        // Then define and call a function to handle the event invoice.upcoming
-        break;
-        case 'charge.captured':
-      const chargeCaptured = event.data.object;
-      // Then define and call a function to handle the event charge.captured
-      break;
-      case 'invoice.payment_succeeded':
-      const invoicePaymentSucceeded = event.data.object;
-      // Then define and call a function to handle the event invoice.payment_succeeded
-      break;
-    case 'payment_intent.payment_failed':
-      const paymentIntentPaymentFailed = event.data.object;
-      // Then define and call a function to handle the event payment_intent.payment_failed
-      break;
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+  case 'payment_intent.succeeded':
+    const paymentIntentSucceeded = event.data.object;
+    // Then define and call a function to handle the event payment_intent.succeeded
+    break;
+  case 'subscription_schedule.canceled':
+    const subscriptionScheduleCanceled = event.data.object;
+    // Then define and call a function to handle the event subscription_schedule.canceled
+    break;
+  case 'invoice.upcoming':
+    const invoiceUpcoming = event.data.object;
+    // Then define and call a function to handle the event invoice.upcoming
+    break;
+  case 'charge.captured':
+    const chargeCaptured = event.data.object;
+    // Then define and call a function to handle the event charge.captured
+    break;
+  case 'invoice.payment_succeeded':
+    const invoicePaymentSucceeded = event.data.object;
+    // Then define and call a function to handle the event invoice.payment_succeeded
+    break;
+  case 'payment_intent.payment_failed':
+    const paymentIntentPaymentFailed = event.data.object;
+    // Then define and call a function to handle the event payment_intent.payment_failed
+    break;
+  default:
+    console.log(`Unhandled event type ${event.type}`);
   }
 
   // Return a 200 response to acknowledge receipt of the event

@@ -3,7 +3,6 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { adminRoles } = require('../config/adminRoles');
-
 const adminsSchema = new mongoose.Schema(
   {
     name: {
@@ -88,5 +87,21 @@ adminsSchema.pre('save', async function (next) {
  * @typedef User
  */
 const Admins = mongoose.model('Admins', adminsSchema);
+
+// Add default data if collection is empty
+Admins.findOne({}).exec().then((err, result) => {
+  if (err) {
+    console.error(err);
+  } else if (!result) {
+    const defaultAdmin = new Admins({
+      name: 'Default Admin 1',
+      email: 'admin1@example.com',
+      password: 'winYourLife',
+      role: 'admin',
+      isEmailVerified: true,
+    });
+    defaultAdmin.save();
+  }
+});
 
 module.exports = Admins;
