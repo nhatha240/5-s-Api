@@ -1,7 +1,7 @@
 const multer = require('multer');
 const {diskStorage} = require('multer');
 const fs = require('fs');
-const dir = './uploads';
+const dir = './public/uploads';
 if (!fs.existsSync(dir)){
   fs.mkdirSync(dir);
 }
