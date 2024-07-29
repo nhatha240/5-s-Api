@@ -12,7 +12,7 @@ const productsSchema = new Schema(
     price: { type: Number, required: true },
     category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
     size: [{ type: String }],
-    status: { type: String, enum: ['publish', 'private', 'outStock'], default: 'private' },
+    status: { type: String, enum: ['public', 'private', 'outStock'], default: 'private' },
     isSale: { type: Boolean, default: false },
     isBestSeller: { type: Boolean, default: false },
     quantity: { type: Number, default: 0 },

@@ -9,6 +9,8 @@ const router = express.Router();
 
 router.post('/login', validate(authValidation.login), authAdminController.login);
 router.post('/register', uploadImage('image','single'), validate(authValidation.registerAdmin), admin('SuperAdmin'), authAdminController.register);
+=======
+router.post('/register', uploadImage('image'), validate(authValidation.registerAdmin), admin('SuperAdmin'), authAdminController.register);
 router.post('/logout', validate(authValidation.logout), authAdminController.logout);
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authAdminController.refreshTokens);
 router.post('/forgot-password', validate(authValidation.forgotPassword), authAdminController.forgotPassword);
@@ -22,7 +24,7 @@ router.post('/change-password', admin(), validate(authValidation.changePassword)
 
 router.get('/get-admins', admin('SuperAdmin'), adminController.getAdmins);
 router.get('/get-admin/:id', admin('SuperAdmin'), adminController.getAdminId);
-router.put('/update-admin/:id', uploadImage('single'), admin('SuperAdmin'), adminController.updateAdmin);
+router.put('/update-admin/:id', uploadImage('image'), admin('SuperAdmin'), adminController.updateAdmin);
 router.delete('/delete-admin/:id', admin('SuperAdmin'), adminController.deleteAdmin);
 
 /*
@@ -31,7 +33,7 @@ router.delete('/delete-admin/:id', admin('SuperAdmin'), adminController.deleteAd
 
 router.post(
   '/create-product/',
-  uploadImage('array'),
+  uploadImage('images', 'array'),
   validate(productValidation.createProduct),
   admin(),
   productController.createProduct
@@ -41,7 +43,7 @@ router.get('/get-product/:id', validate(productValidation.getProduct), admin(), 
 console.log('productValidation.updateProduct');
 router.put(
   '/update-product/:id',
-  uploadImage('array'),
+  uploadImage('images', 'array'),
   validate(productValidation.updateProduct),
   admin(),
   productController.updateProduct
@@ -57,7 +59,7 @@ router.delete(
  */
 router.get('/get-user', admin('SuperAdmin'), adminController.getUser);
 router.get('/get-user/:userID', admin('SuperAdmin'), adminController.getUserId);
-router.put('/update-user/:userID', uploadImage('single'), admin('SuperAdmin'), adminController.updateUser);
+router.put('/update-user/:userID', uploadImage('image'), admin('SuperAdmin'), adminController.updateUser);
 router.delete('/delete-user/:userID', admin('SuperAdmin'), adminController.deleteUser);
 /*
  * Order routes
@@ -71,10 +73,10 @@ router.delete('/delete-order/:id', admin(), adminController.deleteOrder);
  * categories routes
  */
 
-router.post('/create-category',uploadImage('single'), admin(), validate(categoryValidation.createCategory), adminController.createCategory);
+router.post('/create-category',uploadImage('image'), admin(), validate(categoryValidation.createCategory), adminController.createCategory);
 router.get('/get-categories', admin(), validate(categoryValidation.getCategories), adminController.getCategories);
 router.get('/get-category/:id', admin(), validate(categoryValidation.getCategory), adminController.getCategory);
-router.put('/update-category/:id',uploadImage('single'), admin(), validate(categoryValidation.updateCategory), adminController.updateCategory);
+router.put('/update-category',uploadImage('image'), admin(), validate(categoryValidation.updateCategory), adminController.updateCategory);
 router.delete('/delete-category/:id', admin(), validate(categoryValidation.deleteCategory), adminController.deleteCategory);
 
 // /*

@@ -1,4 +1,6 @@
 const { Products, Shop, ProductLike } = require('../models');
+const ApiError = require('../utils/ApiError');
+const httpStatus = require('http-status');
 
 /**
  * Query for products
@@ -82,14 +84,7 @@ async function getProductById(productId) {
  * @returns {Promise<Product>}
  */
 
-async function updateProduct(admin, productId, updateBody) {
-  const product = await getProductById(productId);
-  if (!product) {
-    throw new Error('Product not found');
-  }
-  if (admin.role !== 'admin') {
-    throw new Error('you are not allowed to delete this product');
-  }
+async function updateProduct(product, updateBody) {
   Object.assign(product, updateBody);
   await product.save();
   return product;
@@ -102,13 +97,8 @@ async function updateProduct(admin, productId, updateBody) {
  * @returns {Promise<Object>} - The deleted product.
  * @throws {Error} - If the admin is not allowed to delete the product.
  */
-async function deleteProductById(admin, productId) {
-  const product = await getProductById(productId);
-  if (!product) {
-    throw new Error('you are not allowed to delete this product');
-  }
+async function deleteProductById(product) {
   await product.deleteOne();
-  return product;
 }
 
 /**

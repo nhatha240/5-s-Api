@@ -39,6 +39,14 @@ const getCategoryById = async (id) => {
   return Category.findById(id);
 };
 
+const getCategoryByIds = async (ids) => {
+  return Category.find({
+    _id: { $in: ids }
+  }, '_id').then(items => items.map(item => item._id)) .catch(err => {
+    console.error(err); // Handle any errors
+  });
+};
+
 /**
  * Update category by id
  * @since 1.0.0
@@ -47,12 +55,12 @@ const getCategoryById = async (id) => {
  * @returns {Promise<Category>}
  */
 
-const updateCategoryById = async (categoryId, updateBody) => {
-  const category = await getCategoryById(categoryId);
+const updateCategoryById = async ( updateBody) => {
+  const category = await getCategoryById(updateBody.categoryId);
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
   }
-  if (updateBody.name && (await Category.isNameTaken(updateBody.name, categoryId))) {
+  if (updateBody.name && (await Category.isNameTaken(updateBody.name, updateBody.categoryId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Category already taken');
   }
   Object.assign(category, updateBody);
@@ -116,4 +124,5 @@ module.exports = {
   deleteCategoryById,
   updateItemsCount,
   publicCategory,
+  getCategoryByIds,
 };

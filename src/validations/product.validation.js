@@ -10,14 +10,14 @@ const getProduct = {
 const createProduct = {
   body: Joi.object().keys({
     name: Joi.string().required(),
-    image: Joi.string(),
+    images: Joi.array(),
     description: Joi.string().required(),
     discountPrice: Joi.number(),
     price: Joi.number().required(),
     category: Joi.array().required(),
     size: Joi.array().required(),
     color: Joi.array(),
-    status: Joi.string().required(),
+    status: Joi.string().required().valid('public', 'private'),
     isSale: Joi.boolean(),
     isBestSeller: Joi.boolean(),
     quantity: Joi.number().required(),
@@ -32,7 +32,7 @@ const updateProduct = {
   body: Joi.object()
     .keys({
       name: Joi.string(),
-      image: Joi.array(),
+      images: Joi.array(),
       description: Joi.string(),
       discountPrice: Joi.number(),
       price: Joi.number(),

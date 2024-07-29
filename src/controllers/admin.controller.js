@@ -116,7 +116,7 @@ const getCategory = catchAsync(async (req, res) => {
  */
 
 const updateCategory = catchAsync(async (req, res) => {
-  const result = await categoryService.updateCategoryById(req.params.id, req.body);
+  const result = await categoryService.updateCategoryById( req.body);
   res.send(result);
 });
 /**
