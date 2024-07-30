@@ -21,32 +21,18 @@ const addCart = async (userId, productId, quantity) => {
       cart.save();
       return cart;
     }
-    product.quantity = quantity;
+    if (product.quantity + quantity <= 0) {
+      cart.listProduct = cart.listProduct.filter((product) => product.product !== productId);
+      cart.save();
+      return cart;
+    }
+    product.quantity += quantity;
     cart.save();
     return cart;
   }
 };
 
-const updateCart = async (userId, productId, quantity) => {
-  const cart = await Cart.findOne({ idUser: userId });
-  const product = cart.listProduct.find((product) => product.product === productId);
-  if (!product) {
-    cart.listProduct.push({ product: productId, quantity: quantity });
-    cart.save();
-    return cart;
-  }
-  product.quantity = quantity;
-  cart.save();
-  return cart;
-};
 
-const deleteCart = async (userId, productId) => {
-  const cart = await Cart.findOne({ idUser: userId });
-  if (cart) {
-    cart.listProduct = cart.listProduct.filter((product) => product.product !== productId);
-    await cart.save();
-  }
-};
 
 const thongKeProduct = async (time) => {
   const now = new Date();
@@ -60,7 +46,5 @@ const thongKeProduct = async (time) => {
 module.exports = {
   getCart,
   addCart,
-  updateCart,
-  deleteCart,
   thongKeProduct,
 };

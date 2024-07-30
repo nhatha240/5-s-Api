@@ -2,8 +2,9 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { commentService } = require('../services');
+const { commentService, productService } = require('../services');
 const logger = require('../config/logger');
+const { use } = require('passport');
 
 const getComments = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['status', 'productId']);
@@ -15,8 +16,10 @@ const getComments = catchAsync(async (req, res) => {
 
 const addComment = catchAsync(async (req, res) => {
   req.body.status = false;
+  req.body.userId = req.user.id;
   try {
     commentService.addComment(req.body);
+    productService.addComment(req.body.productId, req.body.rating);
     res.status(httpStatus.CREATED).send('Comment added successfully waiting for approval');
   }catch (error) {
     logger.error(error);
@@ -35,7 +38,7 @@ const approveComment = catchAsync(async (req, res) => {
 });
 const updateComment = catchAsync(async (req, res) => {
   try {
-    commentService.updateComment(req.params.commentId, req.body);
+    commentService.updateComment(req.body.commentId, req.body.comment);
     res.status(httpStatus.ACCEPTED).send('Comment updated successfully');
   } catch (error) {
     logger.error(error);

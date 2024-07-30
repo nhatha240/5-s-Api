@@ -57,10 +57,12 @@ const comment = {
   body: Joi.object().keys({
     productId: Joi.string().custom(objectId),
     comment: Joi.string(),
+    rating: Joi.number().integer().min(1).max(5),
   }),
 };
 const updateComment = {
   body: Joi.object().keys({
+    commentId: Joi.string().custom(objectId),
     comment: Joi.string(),
   }),
   params: Joi.object().keys({

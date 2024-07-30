@@ -1,34 +1,38 @@
 const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
+const httpStatus = require('http-status');
 const { ProductComment } =  require('../models');
 
-const getComments = catchAsync(async (filter, option) => {
+const getComments = async (filter, option) => {
   const comments = await ProductComment.paginate(filter, option);
   return comments;
-});
+};
 
-const addComment = catchAsync(async (bodyCreate) => {
-  return ProductComment.create(bodyCreate);
-});
+const addComment = async (bodyCreate ) => {
+  try {
+    return ProductComment.create(bodyCreate);
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error adding comment');
+  }
+};
 
-const approveComment = catchAsync(async (commentId) => {
+const approveComment = async (commentId) => {
   const comment = await ProductComment.findOne({ _id: commentId });
   if (!comment) {
     throw new Error('Comment not found');
   }
   comment.status = true;
   return comment.save();
-});
+};
 
-const updateComment = catchAsync(async (commentId, bodyUpdate) => {
+const updateComment = async (commentId, bodyUpdate) => {
   const comment = await ProductComment.findOne({ _id: commentId });
   if (!comment) {
     throw new Error('Comment not found');
   }
-  Object.assign(comment, bodyUpdate);
-
+  comment.comment = bodyUpdate.comment;
   return comment.save();
-});
+};
 module.exports = {
   getComments,
   addComment,

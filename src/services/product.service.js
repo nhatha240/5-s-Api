@@ -211,6 +211,17 @@ const likeProduct = async (userId, productId) => {
 const unlikeProduct = async (userId, productId) => {
   return ProductLike.deleteOne({ userId: userId, productId: productId });
 };
+
+const addComment = async (productId, rating) => {
+  const product = await Products.findOne({ _id: productId });
+  if (!product) {
+    throw new Error('Product not found');
+  }
+  product.totalRating += rating;
+  product.userRating += 1;
+  await product.save();
+};
+
 module.exports = {
   queryProducts,
   createProduct,
@@ -224,4 +235,5 @@ module.exports = {
   shopDeleteProduct,
   likeProduct,
   unlikeProduct,
+  addComment,
 };

@@ -17,6 +17,8 @@ const productsSchema = new Schema(
     isBestSeller: { type: Boolean, default: false },
     quantity: { type: Number, default: 0 },
     tags: [{ type: String }],
+    totalRating: { type: Number, default: 0 },
+    userRating: { type: Number, default: 0 },
     options: [
       {
         size: [{ type: String }],

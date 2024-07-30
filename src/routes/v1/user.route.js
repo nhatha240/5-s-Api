@@ -19,7 +19,6 @@ router.post('unlike', auth(), validate(userValidation.unlike), userController.un
 router.post('comment', auth(), validate(userValidation.comment), commentsController.addComment);
 router.post('update-comment', auth(), validate(userValidation.updateComment), commentsController.updateComment);
 router.post('add-cart', auth(), validate(userValidation.addCart), cartController.addCart);
-router.post('remove-cart', auth(), validate(userValidation.deleteCart), cartController.deleteCart);
 router.post('get-cart', auth(), cartController.getCart);
 router.post('add-order', auth(), validate(orderValidation.addOrder), orderController.addOrder);
 router.post('get-order', auth(), orderController.getOrders);
