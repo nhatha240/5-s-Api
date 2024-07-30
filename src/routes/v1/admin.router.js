@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.post('/login', validate(authValidation.login), authAdminController.login);
 router.post('/register', uploadImage('image','single'), validate(authValidation.registerAdmin), admin('SuperAdmin'), authAdminController.register);
-=======
 router.post('/register', uploadImage('image'), validate(authValidation.registerAdmin), admin('SuperAdmin'), authAdminController.register);
 router.post('/logout', validate(authValidation.logout), authAdminController.logout);
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authAdminController.refreshTokens);
