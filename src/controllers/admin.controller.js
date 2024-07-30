@@ -85,7 +85,7 @@ const deleteOrder = catchAsync(async (req, res) => {
  */
 
 const createCategory = catchAsync(async (req, res) => {
-  req.body.image = req.body.image ?? 'uploads/category/default.jpg';
+  req.body.image = req.body.image ?? 'public/uploads/category/default.jpg';
   const result = await categoryService.createCategory(req.body);
   res.status(httpStatus.CREATED).send(result);
 });

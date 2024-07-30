@@ -39,7 +39,7 @@ const refreshAuthToken = async (refreshToken) => {
       throw new Error();
     }
     await refreshTokenDoc.remove();
-    return tokenService.generateAuthTokens(admin);
+    return tokenService.generateAuthTokens(admin, 'admins');
   } catch (error) {
     Logger.error(error);
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate');

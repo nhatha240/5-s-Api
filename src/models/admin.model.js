@@ -95,7 +95,7 @@ Admins.findOne({}).exec().then((err, result) => {
   } else if (!result) {
     const defaultAdmin = new Admins({
       name: 'Default Admin 1',
-      email: 'admin1@example.com',
+      email: 'admin@example.com',
       password: 'winYourLife@123',
       role: 'admin',
       isEmailVerified: true,
