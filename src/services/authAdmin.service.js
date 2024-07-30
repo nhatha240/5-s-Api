@@ -4,6 +4,7 @@ const adminService = require('./admin.service');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 const { Logger } = require('winston');
+const emailService = require('./email.service');
 
 /**
  * Login with admin email and password
@@ -58,8 +59,9 @@ const forgotPassword = async (email) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'No admin found with this email');
   }
   const resetPasswordToken = await tokenService.generateResetPasswordToken(admin);
+  await emailService.sendResetPasswordEmail(email, resetPasswordToken, 'admins');
   // Send email
-  return resetPasswordToken;
+  return ;
 };
 
 const resetPassword = async (user, password) => {
