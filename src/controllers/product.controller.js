@@ -18,7 +18,7 @@ const createProduct = catchAsync(async (req, res) => {
     'quantity',
     'tags',
   ]);
-  body.image = body.image ?? ['uploads/products/default.jpg'];
+  body.image = body.image ?? ['public/uploads/products/default.jpg'];
   body.options = pick(req.body, ['size', 'color']);
   body.category = await categoryService.getCategoryByIds(body.category);
   body.category.forEach(async (categoryId) => {
@@ -69,7 +69,7 @@ const updateProduct = catchAsync(async (req, res) => {
     'quantity',
     'tags',
   ]);
-  body.image = body.image ?? ['uploads/products/default.jpg'];
+  body.image = body.image ?? ['public/uploads/products/default.jpg'];
   body.options = pick(req.body, ['size', 'color']);
   body.category = await categoryService.getCategoryByIds(body.category);
   console.log('body', body.category);

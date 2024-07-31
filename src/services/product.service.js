@@ -58,7 +58,7 @@ async function createProduct(productBody) {
     const product = await Products.create(productBody);
     return product;
   } catch (error) {
-    console.log('error crea te', error);
+    console.log('error create', error);
     throw new Error('Error creating product', error);
   }
 }
@@ -215,7 +215,7 @@ const unlikeProduct = async (userId, productId) => {
 const addComment = async (productId, rating) => {
   const product = await Products.findOne({ _id: productId });
   if (!product) {
-    throw new Error('Product not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
   product.totalRating += rating;
   product.userRating += 1;
