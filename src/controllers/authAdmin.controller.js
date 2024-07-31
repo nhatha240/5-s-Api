@@ -29,7 +29,7 @@ const refreshTokens = catchAsync(async (req, res) => {
 });
 
 const forgotPassword = catchAsync(async (req, res) => {
-  await authAdminService.forgotPassword(req.body.email);ß
+  await authAdminService.forgotPassword(req.body.email);
   res.status(httpStatus.NO_CONTENT).send();
 });
 

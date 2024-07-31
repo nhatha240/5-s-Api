@@ -35,14 +35,13 @@ const loginAdminWithEmailAndPassword = async (email, password) => {
 const refreshAuthToken = async (refreshToken) => {
   try {
     const refreshTokenDoc = await tokenService.verifyToken(refreshToken, tokenTypes.REFRESH);
-    const admin = await adminService.getUserById(refreshTokenDoc.user);
+    const admin = await adminService.getAdminById(refreshTokenDoc.user);
     if (!admin) {
       throw new Error();
     }
-    await refreshTokenDoc.remove();
+    await refreshTokenDoc.deleteOne();
     return tokenService.generateAuthTokens(admin, 'admins');
   } catch (error) {
-    Logger.error(error);
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate');
   }
 };
