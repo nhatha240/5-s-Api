@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
+const { Category } = require('../models');
 
 const createCategory = {
   body: Joi.object().keys({
@@ -12,6 +13,7 @@ const createCategory = {
 const getCategories = {
   query: Joi.object().keys({
     name: Joi.string(),
+    category: Joi.array().items(Joi.string().custom(objectId)),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),

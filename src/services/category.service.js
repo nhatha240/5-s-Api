@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Category } = require('../models');
+const { Category, Products } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -35,16 +35,33 @@ const queryCategories = async (filter, options) => {
  * @returns {Promise<Category>}
  */
 
-const getCategoryById = async (id) => {
-  return Category.findById(id);
+const getCategoryById = async (categoryId) => {
+  try {
+    const category = await Category.findById(categoryId).lean();
+    if (!category) {
+      return null;
+    }
+    const products = await Products.find({ category: categoryId }).paginate();
+    category.products = products;
+    console.log('category', category);
+    return category;
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    throw error;
+  }
 };
 
 const getCategoryByIds = async (ids) => {
-  return Category.find({
-    _id: { $in: ids }
-  }, '_id').then(items => items.map(item => item._id)) .catch(err => {
-    console.error(err); // Handle any errors
-  });
+  return Category.find(
+    {
+      _id: { $in: ids },
+    },
+    '_id',
+  )
+    .then((items) => items.map((item) => item._id))
+    .catch((err) => {
+      console.error(err); // Handle any errors
+    });
 };
 
 /**
@@ -55,7 +72,7 @@ const getCategoryByIds = async (ids) => {
  * @returns {Promise<Category>}
  */
 
-const updateCategoryById = async ( updateBody) => {
+const updateCategoryById = async (updateBody) => {
   const category = await getCategoryById(updateBody.categoryId);
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');

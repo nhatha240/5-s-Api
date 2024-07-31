@@ -10,11 +10,15 @@ const httpStatus = require('http-status');
  * @returns {Promise<PaginationResult>}
  */
 async function queryProducts(filter = {}, options = { cursor: null, limit: 10 }) {
-  const conditions = Object.entries(filter).map(([key, value]) => ({ [key]: value }));
   const newFilter = {};
-  if (conditions.length > 0) {
-    newFilter.$or = conditions;
-  }
+  Object.entries(filter).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      newFilter[key] = { $in: value };
+    } else {
+      newFilter[key] = value;
+    }
+  });
+
   if (options.cursor) {
     newFilter._id = { $gt: options.cursor };
     const query = Products.find(newFilter);
