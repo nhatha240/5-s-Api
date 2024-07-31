@@ -3,9 +3,9 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { orderService } = require('../services');
 const pick = require('../utils/pick');
-const stripe = require('stripe')(
-  'sk_test_51NSujGIqygGkBQRFuIdSfUhPmCpLYN9NarOtgJ8z3yPMBkk3PVjSTqyoKe9Y6fO2RONssakxx70ZNN4EyqGGPMhQ007PzwcA2r'
-);
+const Stripe = require('stripe');
+const env = require('../config/config');
+const stripe = Stripe(env.stripe_secret_key);
 const addOrder = catchAsync(async (req, res) => {
   const order = await orderService.addOrder(req.user._id, req.body.productId, req.body.quantity);
   res.status(httpStatus.CREATED).send(order);
@@ -24,6 +24,16 @@ const paymentOrder = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const createPaymentIntent = catchAsync(async (req, res) => {
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: req.body.amount,
+    currency: 'usd',
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
 const webhookPayment = catchAsync(async (req, res) => {
   const endpointSecret = 'whsec_ae07bb077a33e2f10e340969384f62ef8e85226f8e12309f0bd1b7973cd3aa24';
   const sig = req.headers['stripe-signature'];
@@ -78,4 +88,5 @@ module.exports = {
   getOrders,
   paymentOrder,
   webhookPayment,
+  createPaymentIntent,
 };
