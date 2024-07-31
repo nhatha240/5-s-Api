@@ -14,7 +14,6 @@ const bodyParser = require('body-parser');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
-const forms = require('multer');
 
 const app = express();
 
@@ -43,7 +42,7 @@ app.use(compression());
 // enable cors
 app.use(cors());
 app.options('*', cors());
-app.use('/uploads', express.static('uploads'));
+app.use('/public/uploads', express.static('uploads'));
 // jwt authentication
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
