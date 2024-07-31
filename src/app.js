@@ -42,7 +42,7 @@ app.use(compression());
 // enable cors
 app.use(cors());
 app.options('*', cors());
-app.use('/public/uploads', express.static('uploads'));
+app.use('/public/', express.static('public'));
 // jwt authentication
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
