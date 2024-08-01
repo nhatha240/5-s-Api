@@ -4,7 +4,7 @@ const { objectId } = require('./custom.validation');
 const addOrder = {
   body: Joi.array().items(Joi.object().keys({
     productId: Joi.string().custom(objectId),
-    quantity: Joi.number().required().valid('pending', 'processing', 'completed'),
+    quantity: Joi.number().required().valid('cancel', 'pending', 'completed'),
   }))
 };
 
@@ -12,7 +12,7 @@ const orderPayment = {
   body: Joi.object().keys({
     paymentId: Joi.string(),
     orderId: Joi.string().custom(objectId),
-    status: Joi.string().,
+    status: Joi.string(),
   }),
 };
 
