@@ -41,7 +41,7 @@ const getCategoryById = async (categoryId) => {
     if (!category) {
       return null;
     }
-    const products = await Products.find({ category: categoryId }).paginate();
+    const products = await Products.find({ category: categoryId }).limit(10);
     category.products = products;
     console.log('category', category);
     return category;
