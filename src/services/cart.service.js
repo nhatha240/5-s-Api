@@ -1,5 +1,5 @@
 // const httpStatus = require('http-status');
-const { Cart } = require('../models');
+const { Cart, Products } = require('../models');
 // const ApiError = require('../utils/ApiError');
 
 const getCart = async (userId) => {
@@ -8,40 +8,75 @@ const getCart = async (userId) => {
 };
 
 const addCart = async (userId, productId, quantity) => {
-  const cart = await Cart.findOne({ idUser: userId });
-  if (!cart) {
-    const newCart = new Cart({ idUser: userId });
-    newCart.listProduct.push({ product: productId, quantity: quantity });
-    newCart.save();
-    return newCart;
-  } else {
-    const product = cart.listProduct.find((product) => product.product === productId);
+  try {
+    let cart = await Cart.findOne({ userId: userId });
+    const product = await Products.findOne({ _id: productId });
     if (!product) {
-      cart.listProduct.push({ product: productId, quantity: quantity });
-      cart.save();
-      return cart;
+      throw new Error('Product not found');
     }
-    if (product.quantity + quantity <= 0) {
-      cart.listProduct = cart.listProduct.filter((product) => product.product !== productId);
-      cart.save();
-      return cart;
+    if (!cart) {
+      // If the cart doesn't exist, create a new one
+      if (quantity <= 0) {
+        throw new Error('Quantity must be greater than 0');
+      }
+      if(quantity > product.quantity){
+        quantity = product.quantity;
+      }
+      cart = new Cart({
+        userId: userId,
+        products: [{ product: productId, quantity: quantity }],
+      });
+    } else {
+      // Ensure products is initialized
+      if (!cart.products) {
+        cart.products = [];
+      }
+
+      // Find the product in the cart
+      const productIndex = cart.products.findIndex(
+        (product) => product.product.toString() === productId.toString()
+      );
+
+      if (productIndex === -1) {
+        // If the product is not in the cart, add it
+        if (quantity <= 0) {
+          throw new Error('Quantity must be greater than 0');
+        }
+        if(quantity > product.quantity){
+          quantity = product.quantity;
+        }
+        cart.products.push({ product: productId, quantity: quantity });
+      } else {
+        // If the product is already in the cart, update the quantity
+        cart.products[productIndex].quantity += quantity;
+
+        if(cart.products[productIndex].quantity > product.quantity){
+          cart.products[productIndex].quantity = product.quantity;
+        }
+        // Remove the product if the quantity is zero or less
+        if (cart.products[productIndex].quantity <= 0) {
+          cart.products.splice(productIndex, 1);
+        }
+      }
     }
-    product.quantity += quantity;
-    cart.save();
+
+    // Save the cart
+    await cart.save();
     return cart;
+  } catch (error) {
+    throw new Error(error);
   }
 };
-
 
 
 const thongKeProduct = async (time) => {
   const now = new Date();
   const startOfDay = new Date(time.getFullYear(), time.getMonth(), time.getDate());
-  const cartsAddedToday  = await Cart.countDocuments({
-    updatedAt: { $gte: startOfDay, $lt: now }
+  const cartsAddedToday = await Cart.countDocuments({
+    updatedAt: { $gte: startOfDay, $lt: now },
   });
   return cartsAddedToday;
-}
+};
 
 module.exports = {
   getCart,

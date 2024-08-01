@@ -4,8 +4,8 @@ const catchAsync = require('../utils/catchAsync');
 const { cartService } = require('../services');
 
 const addCart = catchAsync(async (req, res) => {
-  const comment = await cartService.addCart(req.user._id, req.body.productId, req.body.quantity);
-  res.status(httpStatus.CREATED).send(comment);
+  const cart = await cartService.addCart(req.user._id, req.body.productId, req.body.quantity);
+  res.status(httpStatus.CREATED).send(cart);
 });
 
 const getCart = catchAsync(async (req, res) => {
