@@ -7,7 +7,6 @@ module.exports.Coupon = require('./coupon.model');
 module.exports.Feedback = require('./feedback.model');
 module.exports.Cart = require('./cart.model');
 module.exports.Order = require('./order.model');
-module.exports.OrderDetail = require('./orderDetail.model');
 module.exports.Category = require('./category.model');
 module.exports.Brand = require('./brand.model');
 module.exports.Banner = require('./banner.model');

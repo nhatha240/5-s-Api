@@ -2,10 +2,14 @@ const Joi = require('joi');
 const { objectId } = require('./custom.validation');
 
 const addOrder = {
-  body: Joi.array().items(Joi.object().keys({
-    productId: Joi.string().custom(objectId),
-    quantity: Joi.number().required().valid('cancel', 'pending', 'completed'),
-  }))
+  body:Joi.object().keys({
+    products: Joi.array().items(Joi.object().keys({
+      product: Joi.string().custom(objectId),
+      quantity: Joi.number().required(),
+    })),
+    address: Joi.string(),
+    phone: Joi.string(),
+  }),
 };
 
 const orderPayment = {

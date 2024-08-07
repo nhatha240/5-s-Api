@@ -1,6 +1,60 @@
 const httpStatus = require('http-status');
-const Order = require('../models/order.model');
+const { Order, Products } = require('../models');
 const ApiError = require('../utils/ApiError');
+const mongoose = require('mongoose');
+
+const createOrder = async (userId, products, address, phone, coupon = null) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const productPrices = await Promise.all(
+      products.map(async (item) => {
+        console.log('item:', item);
+        const price = await getProductPrice(item.product, item.quantity, session);
+        return {
+          ...item,
+          priceTotal: price * item.quantity,
+          price,
+        };
+      }),
+    );
+    const totalAmount = productPrices.reduce((sum, item) => sum + item.priceTotal, 0);
+    const newOrder = new Order({
+      idUser: userId,
+      products: productPrices,
+      coupon,
+      address,
+      phone,
+      totalAmount,
+    });
+
+    await newOrder.save({session});
+    console.log('newOrder:', newOrder);
+    await session.commitTransaction();
+    session.endSession();
+    return newOrder;
+  } catch (error) {
+    console.error(error);
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(error.statusCode, error.message);
+  }
+};
+const getProductPrice = async (productId, quantity, session) => {
+  const product = await Products.findById(productId);
+  if (!product) {
+    console.log('Product not found', productId);
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+  if (product.quantity < quantity) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Product out of stock');
+  }
+
+  product.quantity -= quantity;
+  await product.save({session});
+  console.log('product:', product.quantity);
+  return product.price;
+};
 /**
  * Query for orders
  * @param {string} cursor - The cursor value
@@ -28,7 +82,6 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
     results,
   };
 };
-
 /**
  * Get order by id
  * @param {string} orderId
@@ -152,7 +205,7 @@ const totalMonth = async (now, startOfCurrentMonth, startOfLastMonth, endOfLastM
   }
 };
 
-const ordersTotle = async (time) => {
+const ordersTotal = async (time) => {
   try {
     const result = await Order.aggregate([
       {
@@ -206,4 +259,6 @@ module.exports = {
   thongKeOrder,
   totalMonth,
   getMonthlyOrderStatsAndCompare,
+  ordersTotal,
+  createOrder,
 };

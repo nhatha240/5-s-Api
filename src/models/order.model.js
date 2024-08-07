@@ -2,11 +2,9 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const orderDetailSchema = Schema({
-  idProduct: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
-  priceCoupon: { type: Number, required: true },
-  priceShip: { type: Number, required: true },
   priceTotal: { type: Number, required: true },
 });
 
@@ -14,11 +12,11 @@ const orderSchema = new mongoose.Schema({
   statusOrder: { type: String, default: 'pending' },
   idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   products: [orderDetailSchema],
+  coupon: { type: String, default: null },
   address: String,
   phone: String,
-  total: Number,
-  time: { type: Date, default: Date.now },
-  rating: Number,
+  totalAmount: Number,
+  rating: { type: Number, default: null },
   idPayment: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment' },
 }, {
   timestamps: true,

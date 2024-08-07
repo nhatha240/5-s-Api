@@ -6,10 +6,54 @@ const pick = require('../utils/pick');
 const Stripe = require('stripe');
 const env = require('../config/config');
 const stripe = Stripe(env.stripe_secret_key);
+
 const addOrder = catchAsync(async (req, res) => {
-  const order = await orderService.addOrder(req.user._id, req.body.productId, req.body.quantity);
+  const { products } = req.body;
+  let { address, phone } = req.body;
+  const userId = req.user._id;
+  if (!userId ||!products || products.length === 0) {
+    res.status(httpStatus.BAD_REQUEST).json({ message: 'Invalid request data' });
+  }
+  if (!address || !phone) {
+    address =  req.user.address;
+    phone = req.user.phone;
+  }
+  const order = await orderService.createOrder(userId, products, address, phone);
+  // const createPaymentJson = PayPalPaymentCreate(order);
   res.status(httpStatus.CREATED).send(order);
 });
+
+const PayPalPaymentCreate = async (order) => {
+  console.log(order);
+  return {
+    intent: 'CAPTURE',
+    payer: {
+      payment_method: 'paypal',
+    },
+    redirect_urls: {
+      return_url: 'http://yourdomain.com/return', // Replace with your return URL
+      cancel_url: 'http://yourdomain.com/cancel', // Replace with your cancel URL
+    },
+    transactions: [
+      {
+        item_list: {
+          items: order.products.map((product) => ({
+            name: product.idProduct,
+            price: product.priceTotal,
+            currency: 'USD',
+            quantity: product.quantity,
+          })),
+        },
+        amount: {
+          currency: 'USD',
+          total: order.totalAmount,
+        },
+        description: 'Your order description',
+      },
+    ],
+  }
+
+};
 
 const getOrders = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['status']);
@@ -24,16 +68,6 @@ const paymentOrder = catchAsync(async (req, res) => {
   res.send(result);
 });
 
-const createPaymentIntent = catchAsync(async (req, res) => {
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: req.body.amount,
-    currency: 'usd',
-  });
-
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
-});
 const webhookPayment = catchAsync(async (req, res) => {
   const endpointSecret = 'whsec_ae07bb077a33e2f10e340969384f62ef8e85226f8e12309f0bd1b7973cd3aa24';
   const sig = req.headers['stripe-signature'];
@@ -88,5 +122,5 @@ module.exports = {
   getOrders,
   paymentOrder,
   webhookPayment,
-  createPaymentIntent,
+
 };

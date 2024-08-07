@@ -23,7 +23,8 @@ const envVarsSchema = Joi.object()
     SMTP_USERNAME: Joi.string().description('username for email server'),
     SMTP_PASSWORD: Joi.string().description('password for email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
-    STIPE_SECRET_KEY: Joi.string().required().description('Stripe API secret key'),
+    PAYPAL_CLIENT_ID: Joi.string().required().description('PAYPAL API client id'),
+    PAYPAL_CLIENT_SECRET: Joi.string().required().description('PAYPAL API secret key'),
   })
   .unknown();
 
@@ -37,6 +38,8 @@ module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   stripe_secret_key: envVars.STIPE_SECRET_KEY,
+  PAYPAL_CLIENT_ID: envVars.PAYPAL_CLIENT_ID,
+  PAYPAL_CLIENT_SECRET: envVars.PAYPAL_CLIENT_SECRET,
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {
