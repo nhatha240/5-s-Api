@@ -10,3 +10,5 @@ module.exports.shopService = require('./shop.service');
 module.exports.categoryService = require('./category.service');
 module.exports.commentService = require('./comment.service');
 module.exports.cartService = require('./cart.service');
+module.exports.paypalService = require('./paypal.service');
+// module.exports.stripeService = require('./stripe.service');

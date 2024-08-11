@@ -6,7 +6,6 @@ const createOrder = async (userId, products, address, phone, coupon = null) => {
   try {
     const productPrices = await Promise.all(
       products.map(async (item) => {
-        console.log('item:', item);
         const price = await getProductPrice(item.product, item.quantity);
         return {
           ...item,
@@ -26,17 +25,39 @@ const createOrder = async (userId, products, address, phone, coupon = null) => {
     });
 
     await newOrder.save();
-    console.log('newOrder:', newOrder);
     return newOrder;
   } catch (error) {
     console.error(error);
     throw new ApiError(error.statusCode, error.message);
   }
 };
+
+const cancelOrder = async (userId, orderId) => {
+  const order = await Order.findOne({ _id: orderId });
+  if (!order) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  if (order.idUser.toString() !== userId.toString()) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'You do not have permission to cancel this order');
+  }
+
+  if (order.status !== 'pending') {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Order cannot be canceled');
+  }
+
+  order.status = 'canceled';
+  order.products.forEach(async (item) => {
+    const product = await Products.findById(item.product);
+    product.quantity += item.quantity;
+    await product.save();
+  });
+  await order.save();
+};
+
 const getProductPrice = async (productId, quantity) => {
   const product = await Products.findById(productId);
   if (!product) {
-    console.log('Product not found', productId);
+    // console.log('Product not found', productId);
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
   if (product.quantity < quantity) {
@@ -45,7 +66,6 @@ const getProductPrice = async (productId, quantity) => {
 
   product.quantity -= quantity;
   await product.save();
-  console.log('product:', product.quantity);
   return product.price;
 };
 /**

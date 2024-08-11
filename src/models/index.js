@@ -30,4 +30,5 @@ module.exports.Brand = require('./brand.model');
 module.exports.Banner = require('./banner.model');
 module.exports.Sku = require('./sku.model');
 module.exports.Review = require('./review.model');
+module.exports.Payment = require('./payment.model');
 

@@ -15,6 +15,7 @@ router.post('/add-cart', auth(), validate(userValidation.addCart), cartControlle
 router.post('/get-cart', auth(), cartController.getCart);
 router.post('/add-order', auth(), validate(orderValidation.addOrder), orderController.addOrder);
 router.post('/orders', auth(), orderController.getOrders); // get order by user id
+router.post('/order/:orderID/capture', auth(), validate(orderValidation.order), orderController.orderCapture); // get order by id
 router.post('/order/:id', auth(), validate(orderValidation.order), orderController.getOrders); // get order by id
 router.post('/payment', auth(), validate(orderValidation.orderPayment), orderController.paymentOrder);
 
