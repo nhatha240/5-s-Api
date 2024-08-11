@@ -1,16 +1,13 @@
 const httpStatus = require('http-status');
 const { Order, Products } = require('../models');
 const ApiError = require('../utils/ApiError');
-const mongoose = require('mongoose');
 
 const createOrder = async (userId, products, address, phone, coupon = null) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
   try {
     const productPrices = await Promise.all(
       products.map(async (item) => {
         console.log('item:', item);
-        const price = await getProductPrice(item.product, item.quantity, session);
+        const price = await getProductPrice(item.product, item.quantity);
         return {
           ...item,
           priceTotal: price * item.quantity,
@@ -28,19 +25,15 @@ const createOrder = async (userId, products, address, phone, coupon = null) => {
       totalAmount,
     });
 
-    await newOrder.save({session});
+    await newOrder.save();
     console.log('newOrder:', newOrder);
-    await session.commitTransaction();
-    session.endSession();
     return newOrder;
   } catch (error) {
     console.error(error);
-    await session.abortTransaction();
-    session.endSession();
     throw new ApiError(error.statusCode, error.message);
   }
 };
-const getProductPrice = async (productId, quantity, session) => {
+const getProductPrice = async (productId, quantity) => {
   const product = await Products.findById(productId);
   if (!product) {
     console.log('Product not found', productId);
@@ -51,7 +44,7 @@ const getProductPrice = async (productId, quantity, session) => {
   }
 
   product.quantity -= quantity;
-  await product.save({session});
+  await product.save();
   console.log('product:', product.quantity);
   return product.price;
 };
