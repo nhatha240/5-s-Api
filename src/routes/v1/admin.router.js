@@ -62,7 +62,7 @@ router.delete('/customer/:userID', admin(), adminController.deleteUser);
 /*
  * Order routes
  */
-router.get('/get-orders', admin(), adminController.getOrders);
+router.get('/list-order', admin(), adminController.getOrders);
 router.get('/order/:id', admin(), adminController.getOrder);
 router.put('/order/:cartId', admin(), validate(userValidation.updateCartStatus), adminController.updateOrder);
 router.delete('/delete-order/:id', admin(), adminController.deleteOrder);
