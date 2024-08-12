@@ -40,7 +40,7 @@ const orderCapture = catchAsync(async (req, res) => {
 });
 
 const cancelOrder = catchAsync(async (req, res) => {
-  const result = await orderService.cancelOrder(req.user._id, req.body.orderId);
+  const result = await orderService.cancelOrder(req.user._id, req.body.paymentId);
   res.send(result);
 });
 
@@ -48,13 +48,17 @@ const getOrders = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['status']);
   const options = pick(req.query, ['sortBy', 'limit', 'page', 'cursor']);
 
-  const result = await orderService.queryOrders(filter, options);
+  const result = await orderService.getOrderByUser(req.user.id, filter, options);
   res.send(result);
 });
 
-const paymentOrder = catchAsync(async (req, res) => {
-  const result = await orderService.paymentOrder(req.user._id, req.body.orderId);
-  res.send(result);
+const getOrder = catchAsync(async (req, res) => {
+  const order = await orderService.getOrderById(req.user.id,req.params.orderId);
+  if (!order) {
+    console.log('Order not found', order);
+    res.status(httpStatus.NOT_FOUND).json({ message: 'Order not found' });
+  }
+  res.send(order);
 });
 
 const webhookPayment = catchAsync(async (req, res) => {
@@ -109,8 +113,8 @@ const webhookPayment = catchAsync(async (req, res) => {
 module.exports = {
   addOrder,
   getOrders,
-  paymentOrder,
   webhookPayment,
   cancelOrder,
   orderCapture,
+  getOrder,
 };

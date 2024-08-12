@@ -3,8 +3,7 @@ const { Cart, Products } = require('../models');
 // const ApiError = require('../utils/ApiError');
 
 const getCart = async (userId) => {
-  const carts = await Cart.findOne({ idUser: userId });
-  return carts;
+  return Cart.findOne({ userId }).select('-userId');
 };
 
 const addCart = async (userId, productId, quantity) => {

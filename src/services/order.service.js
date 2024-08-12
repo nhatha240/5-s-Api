@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Order, Products } = require('../models');
+const { Order, Products, Payment } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createOrder = async (userId, products, address, phone, coupon = null) => {
@@ -32,7 +32,8 @@ const createOrder = async (userId, products, address, phone, coupon = null) => {
   }
 };
 
-const cancelOrder = async (userId, orderId) => {
+const cancelOrder = async (userId, transactionId) => {
+  const { orderId } = await Payment.findOneAndUpdate({ transactionId }, { status: 'canceled' }).exec();
   const order = await Order.findOne({ _id: orderId });
   if (!order) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
@@ -42,6 +43,7 @@ const cancelOrder = async (userId, orderId) => {
   }
 
   if (order.status !== 'pending') {
+    console.log('Order cannot be canceled', order);
     throw new ApiError(httpStatus.BAD_REQUEST, 'Order cannot be canceled');
   }
 
@@ -101,10 +103,19 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
  * @returns {Promise<Order>}
  */
 
-const getOrderById = async (orderId) => {
-  return Order.findOne({ _id: orderId }).populate('products.idProduct').exec();
+const getOrderById = async (idUser, orderId) => {
+  return Order.findOne({ _id: orderId, idUser: idUser })
+    .select('-idPayment -idUser')
+    .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
+    .exec();
 };
 
+const getOrderByUser = async (userId) => {
+  return Order.find({ idUser: userId })
+    .select('-idPayment -idUser')
+    .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
+    .exec();
+};
 /**
  * Update order by id
  * @param {string} orderId
@@ -274,4 +285,6 @@ module.exports = {
   getMonthlyOrderStatsAndCompare,
   ordersTotal,
   createOrder,
+  cancelOrder,
+  getOrderByUser,
 };

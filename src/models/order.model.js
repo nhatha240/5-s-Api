@@ -9,7 +9,7 @@ const orderDetailSchema = Schema({
 });
 
 const orderSchema = new mongoose.Schema({
-  statusOrder: { type: String, default: 'pending' }, // pending, success, cancel, shipping, complete
+  status: { type: String, default: 'pending' }, // pending, success, canceled, shipping, complete
   idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   products: [orderDetailSchema],
   coupon: { type: String, default: null },

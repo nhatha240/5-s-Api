@@ -39,7 +39,6 @@ router.post(
 );
 router.get('/get-products', admin(), productController.getProducts);
 router.get('/get-product/:id', validate(productValidation.getProduct), admin(), productController.getProductById);
-console.log('productValidation.updateProduct');
 router.put(
   '/update-product/:id',
   uploadImage('images', 'array'),

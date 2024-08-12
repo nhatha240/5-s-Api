@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
+const { param } = require('../routes/v1/admin.router');
 
 const addOrder = {
   body:Joi.object().keys({
@@ -21,15 +22,19 @@ const orderPayment = {
 };
 
 const order = {
-  body: Joi.object().keys({
-    payment: Joi.number().required(),
-    total: Joi.number().required(),
+  params: Joi.object().keys({
+    orderId: Joi.string().required(),
   }),
 };
-
+const cancelOrder = {
+  body: Joi.object().keys({
+    paymentId: Joi.string().required(),
+  }),
+};
 module.exports = {
   addOrder,
   orderPayment,
   order,
+  cancelOrder,
 };
 
