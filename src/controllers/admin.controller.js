@@ -30,7 +30,7 @@ const deleteAdmin = catchAsync(async (req, res) => {
 });
 
 const getUser = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'email']);
+  const filter = pick(req.query, ['name', 'email', 'type']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await userService.queryUsers(filter, options);
   res.send(result);
@@ -45,7 +45,6 @@ const getUserId = catchAsync(async (req, res) => {
   const comment = await commentService.queryOneLastComment(req.params.userID);
   user.orders = result;
   user.comments = comment;
-  console.log('user', user);
   res.send(user);
 });
 

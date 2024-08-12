@@ -82,7 +82,6 @@ const createOrder = async (cart) => {
   const accessToken = await generateAccessToken();
   const url = `${PAYPAL_BASE_URL}/v2/checkout/orders`;
   const payload = await PayPalPaymentCreate(cart);
-  console.log('payload', JSON.stringify(payload));
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
