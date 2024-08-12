@@ -16,6 +16,9 @@ const productCommentSchema = new Schema(
 
 productCommentSchema.plugin(toJSON);
 productCommentSchema.plugin(paginate);
+productCommentSchema.index({ userId: 1 });
+productCommentSchema.index({ productId: 1, status: 1 });
+productCommentSchema.index({ productId: 1, userId: 1 });
 const productComment = model('ProductComment', productCommentSchema);
 
 module.exports = productComment;

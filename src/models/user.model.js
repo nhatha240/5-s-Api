@@ -87,7 +87,7 @@ userSchema.pre('save', async function (next) {
   }
   next();
 });
-
+userSchema.index({ name: 'text', email: 'text' });
 /**
  * @typedef User
  */

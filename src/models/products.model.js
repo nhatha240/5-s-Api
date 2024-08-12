@@ -33,7 +33,12 @@ const productsSchema = new Schema(
 
 productsSchema.plugin(toJSON);
 productsSchema.plugin(paginate);
-
+productsSchema.index({ name: 'text', status: 1 });
+productsSchema.index({ category: 1, status: 1 });
+productsSchema.index({ isSale: 1 });
+productsSchema.index({ isBestSeller: 1 });
+productsSchema.index({ tags: 1 });
+productsSchema.index({ productsSchema: 1 });
 const Products = mongoose.model('Product', productsSchema);
 
 module.exports = Products;

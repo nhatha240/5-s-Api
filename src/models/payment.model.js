@@ -15,6 +15,10 @@ const paymentSchema = new Schema(
   },
 );
 
+paymentSchema.index({ orderId: 1 });
+paymentSchema.index({ status: 1 });
+paymentSchema.index({ transactionId: 1 });
+
 const Payment = mongoose.model('Payment', paymentSchema);
 
 module.exports = Payment;
