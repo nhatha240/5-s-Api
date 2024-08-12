@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const { toJSON, paginate } = require('./plugins');
 
 const productCommentSchema = new Schema(
   {
@@ -13,6 +14,8 @@ const productCommentSchema = new Schema(
   }
 );
 
+productCommentSchema.plugin(toJSON);
+productCommentSchema.plugin(paginate);
 const productComment = model('ProductComment', productCommentSchema);
 
 module.exports = productComment;

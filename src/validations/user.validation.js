@@ -55,15 +55,16 @@ const unlike = {
 
 const comment = {
   body: Joi.object().keys({
-    productId: Joi.string().custom(objectId),
+    productId: Joi.string().custom(objectId).required(),
     comment: Joi.string(),
-    rating: Joi.number().integer().min(1).max(5),
+    rating: Joi.number().integer().min(1).max(5).required(),
   }),
 };
 const updateComment = {
   body: Joi.object().keys({
     commentId: Joi.string().custom(objectId),
     comment: Joi.string(),
+    rating: Joi.number().integer().min(1).max(5),
   }),
   params: Joi.object().keys({
     commentId: Joi.string().custom(objectId),

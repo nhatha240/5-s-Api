@@ -14,23 +14,22 @@ const getComments = catchAsync(async (req, res) => {
 });
 
 const addComment = catchAsync(async (req, res) => {
-  console.log('req.body', req.body);
   req.body.status = false;
   req.body.userId = req.user.id;
   try {
     await commentService.addComment(req.body);
     await productService.addComment(req.body.productId, req.body.rating);
     res.status(httpStatus.CREATED).send({});
-  }catch (error) {
+  } catch (error) {
     logger.error(error);
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error adding comment')
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error adding comment');
   }
 });
 
 const approveComment = catchAsync(async (req, res) => {
   try {
     commentService.approveComment(req.params.commentId);
-    res.status(httpStatus.ACCEPTED).send({message : 'Comment approved successfully'});
+    res.status(httpStatus.ACCEPTED).send({ message: 'Comment approved successfully' });
   } catch (error) {
     logger.error(error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error approving comment');
@@ -38,8 +37,8 @@ const approveComment = catchAsync(async (req, res) => {
 });
 const updateComment = catchAsync(async (req, res) => {
   try {
-    commentService.updateComment(req.body.commentId, req.body.comment);
-    res.status(httpStatus.ACCEPTED).send({message :'Comment updated successfully'});
+    commentService.updateComment(req.user.id, req.body.commentId, req.body.comment, req.body.rating);
+    res.status(httpStatus.ACCEPTED).send({ message: 'Comment updated successfully' });
   } catch (error) {
     logger.error(error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error updating comment');

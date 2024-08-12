@@ -1,13 +1,14 @@
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
-const { ProductComment } =  require('../models');
+const { ProductComment } = require('../models');
+const { productService } = require('./index');
 
 const getComments = async (filter, option) => {
   const comments = await ProductComment.paginate(filter, option);
   return comments;
 };
 
-const addComment = async (bodyCreate ) => {
+const addComment = async (bodyCreate) => {
   try {
     return ProductComment.create(bodyCreate);
   } catch (error) {
@@ -25,12 +26,17 @@ const approveComment = async (commentId) => {
   return comment.save();
 };
 
-const updateComment = async (commentId, bodyUpdate) => {
-  const comment = await ProductComment.findOne({ _id: commentId });
+const updateComment = async (userId, commentId, commentValue, rating) => {
+  const comment = await ProductComment.findOne({ _id: commentId, userId });
   if (!comment) {
     throw new Error('Comment not found');
   }
-  comment.comment = bodyUpdate.comment;
+  if (rating) {
+    const addRating = rating - comment.rating;
+    productService.addComment(comment.productId, addRating);
+    comment.rating = rating;
+  }
+  comment.comment = commentValue;
   return comment.save();
 };
 module.exports = {

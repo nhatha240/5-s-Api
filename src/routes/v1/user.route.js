@@ -12,7 +12,7 @@ router.post('/unlike', auth(), validate(userValidation.unlike), userController.u
 router.post('/comment', auth(), validate(userValidation.comment), commentsController.addComment);
 router.post('/update-comment', auth(), validate(userValidation.updateComment), commentsController.updateComment);
 router.post('/add-cart', auth(), validate(userValidation.addCart), cartController.addCart);
-router.get('/get-cart', auth(), cartController.getCart);
+router.get('/list-cart', auth(), cartController.getCart);
 router.post('/add-order', auth(), validate(orderValidation.addOrder), orderController.addOrder);
 router.get('/orders', auth(), orderController.getOrders); // get order by user id
 router.post('/order/:orderID/capture', auth(), validate(orderValidation.order), orderController.orderCapture); // get order by id
