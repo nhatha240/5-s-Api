@@ -119,6 +119,7 @@ const getOrderByAdminId = async (orderId) => {
   return Order.findOne({ _id: orderId })
     .select('-__v')
     .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice -__v' })
+    .populate({ path: 'idUser', select: '-password -__v -isDeleted -isBlocked -lastLogin' })
     .exec();
 };
 
