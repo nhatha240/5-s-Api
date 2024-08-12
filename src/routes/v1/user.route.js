@@ -13,6 +13,7 @@ router.post('/comment', auth(), validate(userValidation.comment), commentsContro
 router.post('/update-comment', auth(), validate(userValidation.updateComment), commentsController.updateComment);
 router.post('/add-cart', auth(), validate(userValidation.addCart), cartController.addCart);
 router.get('/list-cart', auth(), cartController.getCart);
+router.post('/remove-cart', auth(), cartController.removeCart);
 router.post('/add-order', auth(), validate(orderValidation.addOrder), orderController.addOrder);
 router.get('/orders', auth(), orderController.getOrders); // get order by user id
 router.post('/order/:orderID/capture', auth(), validate(orderValidation.order), orderController.orderCapture); // get order by id

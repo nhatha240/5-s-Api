@@ -136,6 +136,15 @@ const createdTotal = async (now, startOfCurrentMonth, startOfLastMonth, endOfLas
     console.error('Lỗi:', err);
   }
 };
+const updateUserByUserId = async (userId, updateBody) => {
+  const user = await User.findOne({ _id: userId});
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  Object.assign(user, updateBody);
+  await user.save();
+  return user;
+}
 module.exports = {
   createUser,
   queryUsers,
@@ -146,4 +155,5 @@ module.exports = {
   createdLastTimeCount,
   lastLoginLastTimeCount,
   createdTotal,
+  updateUserByUserId,
 };

@@ -31,7 +31,7 @@ const deleteAdmin = catchAsync(async (req, res) => {
 
 
 const getUser = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
+  const filter = pick(req.query, ['name', 'email']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await userService.queryUsers(filter, options);
   res.send(result);
@@ -46,7 +46,7 @@ const getUserId = catchAsync(async (req, res) => {
 });
 
 const updateUser = catchAsync(async (req, res) => {
-  const user = await userService.updateUserById(req.params.userID, req.body);
+  const user = await userService.updateUserByUserId(req.params.userID, req.body);
   res.send(user);
 });
 
@@ -63,12 +63,13 @@ const getOrders = catchAsync(async (req, res) => {
 });
 
 const getOrder = catchAsync(async (req, res) => {
-  const result = await orderService.getOrderById(req.params.id);
+  console.log('req.params.id', req.params.id);
+  const result = await orderService.getOrderByAdminId(req.params.id);
   res.send(result);
 });
 
 const updateOrder = catchAsync(async (req, res) => {
-  const result = await orderService.updateOrder(req.params.id, req.body);
+  const result = await orderService.updateStatusOrder(req.params.cartId, req.body.status);
   res.send(result);
 });
 

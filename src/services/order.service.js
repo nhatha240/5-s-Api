@@ -109,13 +109,29 @@ const getOrderById = async (idUser, orderId) => {
     .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
     .exec();
 };
+const getOrderByAdminId = async (orderId) => {
+  return Order.findOne({ _id: orderId })
+    .select('-__v')
+    .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice -__v' })
+    .exec();
+};
 
+const updateStatusOrder = async (orderId, status) => {
+  const order = await Order.findById(orderId);
+  if (!order) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  order.status = status;
+  await order.save();
+  return order;
+};
 const getOrderByUser = async (userId) => {
   return Order.find({ idUser: userId })
     .select('-idPayment -idUser')
     .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
     .exec();
 };
+
 /**
  * Update order by id
  * @param {string} orderId
@@ -287,4 +303,6 @@ module.exports = {
   createOrder,
   cancelOrder,
   getOrderByUser,
+  getOrderByAdminId,
+  updateStatusOrder,
 };

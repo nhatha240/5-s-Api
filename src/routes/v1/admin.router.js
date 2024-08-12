@@ -55,16 +55,16 @@ router.delete(
 /*
  * user routes
  */
-router.get('/customers', admin('SuperAdmin'), adminController.getUser);
-router.get('/customer/:userID', admin('SuperAdmin'), adminController.getUserId);
-router.put('/update-user/:userID', uploadImage('image'), admin('SuperAdmin'), adminController.updateUser);
-router.delete('/delete-user/:userID', admin('SuperAdmin'), adminController.deleteUser);
+router.get('/customers', admin(), adminController.getUser);
+router.get('/customer/:userID', admin(), adminController.getUserId);
+router.put('/customer/:userID', uploadImage('image'), admin(), adminController.updateUser);
+router.delete('/customer/:userID', admin(), adminController.deleteUser);
 /*
  * Order routes
  */
 router.get('/get-orders', admin(), adminController.getOrders);
-router.get('/get-order/:id', admin(), adminController.getOrder);
-router.put('/update-order/:id', admin(), adminController.updateOrder);
+router.get('/order/:id', admin(), adminController.getOrder);
+router.put('/order/:cartId', admin(), validate(userValidation.updateCartStatus), adminController.updateOrder);
 router.delete('/delete-order/:id', admin(), adminController.deleteOrder);
 
 /*

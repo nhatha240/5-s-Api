@@ -77,8 +77,27 @@ const thongKeProduct = async (time) => {
   return cartsAddedToday;
 };
 
+const removeCart = async (userId, productId) => {
+  const cart = await Cart.findOne({ userId: userId });
+  if (!cart) {
+    throw new Error('Cart not found');
+  }
+
+  const productIndex = cart.products.findIndex(
+    (product) => product.product.toString() === productId.toString()
+  );
+
+  if (productIndex === -1) {
+    throw new Error('Product not found in cart');
+  }
+
+  cart.products.splice(productIndex, 1);
+  await cart.save();
+  return cart;
+};
 module.exports = {
   getCart,
   addCart,
   thongKeProduct,
+  removeCart,
 };

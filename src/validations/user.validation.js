@@ -82,7 +82,14 @@ const deleteCart = {
     productId: Joi.string().custom(objectId),
   }),
 };
-
+const updateCartStatus = {
+  params: Joi.object().keys({
+    cartId: Joi.string().custom(objectId),
+  }),
+  body: Joi.object().keys({
+    status: Joi.string().required(),
+  }),
+};
 const adminComment = {
   body: Joi.object().keys({
     commentId: Joi.string().custom(objectId),
@@ -103,4 +110,5 @@ module.exports = {
   addCart,
   deleteCart,
   adminComment,
+  updateCartStatus,
 };
