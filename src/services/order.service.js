@@ -121,6 +121,9 @@ const updateStatusOrder = async (orderId, status) => {
   if (!order) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
+  if(order.status === 'canceled'){
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Order has been canceled');
+  }
   order.status = status;
   await order.save();
   return order;
