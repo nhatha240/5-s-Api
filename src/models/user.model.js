@@ -68,6 +68,14 @@ const userSchema = mongoose.Schema(
       trim: true,
       default: null
     },
+    totalOrder: {
+      type: Number,
+      default: 0
+    },
+    totalMoney: {
+      type: Number,
+      default: 0
+    },
   },
   {
     timestamps: true,

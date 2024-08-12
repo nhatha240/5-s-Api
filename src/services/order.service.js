@@ -112,7 +112,7 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
 const getOrderById = async (idUser, orderId) => {
   return Order.findOne({ _id: orderId, idUser: idUser })
     .select('-idPayment -idUser')
-    .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
+    // .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
     .exec();
 };
 const getOrderByAdminId = async (orderId) => {

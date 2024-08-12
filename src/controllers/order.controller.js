@@ -27,18 +27,15 @@ const addOrder = catchAsync(async (req, res) => {
 });
 
 const orderCapture = catchAsync(async (req, res) => {
-  try {
-    const { orderID } = req.params;
-    const { jsonResponse, httpStatusCode } = await paypalService.captureOrder(orderID);
-    const { orderId } = await paypalService.updatePayment(orderID, jsonResponse.status);
-    const order = await orderService.getOrderById(orderId);
-    order.status = 'success';
-    await order.save();
-    res.status(httpStatusCode).json(jsonResponse);
-  } catch (error) {
-    console.error('Failed to create order:', error);
-    res.status(500).json({ error: 'Failed to capture order.' });
-  }
+  const { orderID } = req.params;
+  const { jsonResponse, httpStatusCode } = await paypalService.captureOrder(orderID);
+  const { orderId } = await paypalService.updatePayment(orderID, jsonResponse.status);
+  const order = await orderService.getOrderById(orderId, req.user.id);
+  order.status = 'success';
+  await order.save();
+  req.user.totalOrder += 1;
+  req.user.totalMoney += order.totalAmount;
+  res.status(httpStatusCode).json(jsonResponse);
 });
 
 const cancelOrder = catchAsync(async (req, res) => {
