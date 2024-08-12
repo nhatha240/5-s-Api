@@ -93,4 +93,14 @@ router.get('/list-rating', admin(), commentsController.getRatings);
 router.put('/rating', admin(), validate(userValidation.adminComment), commentsController.approveComment);
 router.delete('/rating/:id', admin(), commentsController.deleteComment);
 
+/**
+ * csv routes
+ */
+
+// router.post('/upload-csv', uploadImage('csv'), admin(), adminController.uploadCsv);
+router.get('/csv/order', admin(), adminController.csvOrder);
+router.get('/csv/products', admin(), adminController.csvProducts);
+router.get('/csv/customers', admin(), adminController.csvCustomers);
+router.get('/csv/rating', admin(), adminController.csvRating);
+
 module.exports = router;

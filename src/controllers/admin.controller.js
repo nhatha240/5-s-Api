@@ -3,6 +3,8 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { adminService, userService, orderService, categoryService, commentService } = require('../services');
+const { stringify } = require('csv-stringify');
+
 
 const getAdmins = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role', 'email', 'shop']);
@@ -132,6 +134,70 @@ const deleteCategory = catchAsync(async (req, res) => {
   await categoryService.removeCategory(req.params.id);
   res.status(httpStatus.NO_CONTENT).send();
 });
+/**
+ * csv controller
+ */
+
+// const uploadCsv = catchAsync(async (req, res) => {
+//   if (!req.file) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, 'CSV file is required');
+//   }
+//   const file = req.file.buffer.toString();
+//   const records = await parse(file, {
+//     columns: true,
+//     skip_empty_lines: true,
+//   });
+//   assert.deepStrictEqual(
+//     records[0],
+//     {
+//       name: 'name',
+//       email: 'email',
+//       password: 'password',
+//       role: 'role',
+//       shop: 'shop',
+//     },
+//     'CSV file is invalid'
+//   );
+//   const result = await adminService.createAdmins(records);
+//   res.send(result);
+// });
+
+const csvOrder = catchAsync(async (req, res) => {
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-order-' + Date.now() + '.csv\"');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Pragma', 'no-cache');
+  const records = await orderService.exportOrder();
+  stringify(records, { header: true , columns[]}).pipe(res);
+});
+
+const csvProducts = catchAsync(async (req, res) => {
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-order-' + Date.now() + '.csv\"');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Pragma', 'no-cache');
+  const records = await orderService.exportOrder();
+  stringify(records, { header: true }).pipe(res);
+
+});
+
+const csvCustomers = catchAsync(async (req, res) => {
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-order-' + Date.now() + '.csv\"');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Pragma', 'no-cache');
+  const records = await orderService.exportOrder();
+  stringify(records, { header: true }).pipe(res);
+});
+
+const csvRating = catchAsync(async (req, res) => {
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-order-' + Date.now() + '.csv\"');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Pragma', 'no-cache');
+  const records = await orderService.exportOrder();
+  stringify(records, { header: true }).pipe(res);
+});
 
 /**
  * subcategories controller
@@ -232,6 +298,10 @@ module.exports = {
   getCategory,
   updateCategory,
   deleteCategory,
+  csvOrder,
+  csvProducts,
+  csvCustomers,
+  csvRating,
   // createProduct,
   // getProducts,
   // getProduct,
