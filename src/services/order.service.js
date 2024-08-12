@@ -83,7 +83,7 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
   if (options.cursor) {
     newFilter = { ...newFilter, _id: { $gt: options.cursor } };
   }
-  const query = Order.find(newFilter).populate({ path: 'idUser', select: 'name' }).populate({ path: 'idPayment', select: 'status -idUser' });
+  const query = Order.find(newFilter).populate({ path: 'idUser', select: 'name' }).populate({ path: 'idPayment', select: 'status' });
   query.sort({ _id: options.sortBy === 'desc' ? -1 : 1 });
   query.limit(parseInt(options.limit) + 1); // Fetch one extra to check for next page
   const results = await query.exec();
