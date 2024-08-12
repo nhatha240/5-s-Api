@@ -16,14 +16,9 @@ const getComments = catchAsync(async (req, res) => {
 const addComment = catchAsync(async (req, res) => {
   req.body.status = false;
   req.body.userId = req.user.id;
-  try {
-    await commentService.addComment(req.body);
-    await productService.addComment(req.body.productId, req.body.rating);
-    res.status(httpStatus.CREATED).send({});
-  } catch (error) {
-    logger.error(error);
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error adding comment');
-  }
+  await commentService.addComment(req.body);
+  await productService.addComment(req.body.productId, req.body.rating);
+  res.status(httpStatus.CREATED).send({});
 });
 
 const approveComment = catchAsync(async (req, res) => {

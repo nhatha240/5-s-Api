@@ -10,6 +10,10 @@ const getComments = async (filter, option) => {
 
 const addComment = async (bodyCreate) => {
   try {
+    const products = productService.getProductById(bodyCreate.productId);
+    if (!products) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+    }
     return ProductComment.create(bodyCreate);
   } catch (error) {
     console.error(error);
