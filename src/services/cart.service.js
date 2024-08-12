@@ -1,5 +1,6 @@
 // const httpStatus = require('http-status');
 const { Cart, Products } = require('../models');
+const ApiError = require('../utils/ApiError');
 // const ApiError = require('../utils/ApiError');
 
 const getCart = async (userId) => {
@@ -80,7 +81,12 @@ const thongKeProduct = async (time) => {
 const removeCart = async (userId, productId) => {
   const cart = await Cart.findOne({ userId: userId });
   if (!cart) {
-    throw new Error('Cart not found');
+    const cart = new Cart({
+      userId: userId,
+      products: [],
+    });
+    await cart.save();
+    throw new ApiError(400,'Product not found in cart');
   }
 
   const productIndex = cart.products.findIndex(
@@ -88,7 +94,7 @@ const removeCart = async (userId, productId) => {
   );
 
   if (productIndex === -1) {
-    throw new Error('Product not found in cart');
+    throw new ApiError(400,'Product not found in cart');
   }
 
   cart.products.splice(productIndex, 1);
