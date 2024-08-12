@@ -90,12 +90,11 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
 
   // Check if the extra document was fetched
   const hasNextPage = results.length > options.limit;
-
-  const prevCursor = options.cursor && results.length > 0 ? results[0]._id : null;
-  const nextCursor = hasNextPage ? results[results.length - 1]._id : null;
   if (hasNextPage) {
     results.pop(); // Remove the extra document
   }
+  const prevCursor = options.cursor && results.length > 0 ? results[0]._id : null;
+  const nextCursor = hasNextPage ? results[results.length - 1]._id : null;
   return {
     limit: options.limit,
     nextCursor,
