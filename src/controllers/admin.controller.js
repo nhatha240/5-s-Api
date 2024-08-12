@@ -41,7 +41,6 @@ const getUserId = catchAsync(async (req, res) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  console.log('req.params.userID', user);
   const result = await orderService.orderByUser(req.params.userID);
   const comment = await commentService.queryOneLastComment(req.params.userID);
   user.orders = result;
