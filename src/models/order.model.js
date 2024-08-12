@@ -8,7 +8,7 @@ const orderDetailSchema = Schema({
 });
 
 const orderSchema = new mongoose.Schema({
-  status: { type: String, default: 'pending' }, // pending, success, canceled, shipping, complete
+  status: { type: String, default: 'pending' }, // pending, success, canceled, process, shipping, delivery
   idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   products: [orderDetailSchema],
   processDate: { type: Date, default: null },

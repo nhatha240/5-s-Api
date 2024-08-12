@@ -83,7 +83,7 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
   if (options.cursor) {
     newFilter = { ...newFilter, _id: { $gt: options.cursor } };
   }
-  const query = Order.find(newFilter);
+  const query = Order.find(newFilter).populate({ path: 'idUser', select: 'name' }).populate({ path: 'idPayment', select: 'status' });
   query.sort({ _id: options.sortBy === 'desc' ? -1 : 1 });
   query.limit(parseInt(options.limit) + 1); // Fetch one extra to check for next page
   const results = await query.exec();
@@ -133,15 +133,15 @@ const updateStatusOrder = async (orderId, body) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Order has been canceled');
   }
   if (body.status === 'process') {
-    body.processDate = new Date();
+    body.processDate = body.processDate ?? new Date();
   }
   if (body.status === 'shipping') {
-    body.shipDate = new Date();
+    body.shipDate = body.shipDate ?? new Date();
     const shipping = Str_Random(10);
     Payment.findOneAndUpdate({ orderId }, { shippingCode: shipping }).exec();
   }
-  if (body.status === 'complete') {
-    body.deliveryDate = new Date();
+  if (body.status === 'delivery') {
+    body.deliveryDate = body.deliveryDate ?? new Date();
   }
   Object.assign(order, body);
   await order.save();
