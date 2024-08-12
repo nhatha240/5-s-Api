@@ -1,6 +1,5 @@
 const catchAsync = require('../utils/catchAsync');
 const httpStatus = require('http-status');
-const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const { cartService, userService, orderService } = require('../services');
 
@@ -36,6 +35,7 @@ const bieuDo = catchAsync(async (req, res) => {
       lastLoginLastTimeCount,
     });
   } catch (error) {
+    console.log(error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }
 });
@@ -71,7 +71,7 @@ const total = catchAsync(async (req, res) => {
     const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-    const { currentMonthAmount, lastMonthAmount, percentageChange } = await orderService.totalMonth(
+    const { currentMonthAmount, percentageChange } = await orderService.totalMonth(
       now,
       startOfCurrentMonth,
       startOfLastMonth,
@@ -81,7 +81,7 @@ const total = catchAsync(async (req, res) => {
     const { newUsersThisMonth, loginsThisMonth, newUserPercentageChange, loginUserPercentageChange } =
       await userService.createdTotal(now, startOfCurrentMonth, startOfLastMonth, endOfLastMonth);
 
-    const { ordersThisMonth, ordersLastMonth, orderPercentageChange } = await orderService.getMonthlyOrderStatsAndCompare(
+    const { ordersThisMonth, orderPercentageChange } = await orderService.getMonthlyOrderStatsAndCompare(
       now,
       startOfCurrentMonth,
       startOfLastMonth,

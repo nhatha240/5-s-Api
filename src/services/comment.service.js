@@ -86,6 +86,10 @@ const deleteComment = async (commentId) => {
   await productService.deleteComment(comment.productId, rating);
   return comment.remove();
 };
+
+const exportRating = async (filter) => {
+  return await ProductComment.find(filter, '-__v -updatedAt -').populate({ path: 'productId', select: 'name image price options discountPrice isSale isBestSeller quantity totalRating userRating' }).name();
+};
 module.exports = {
   getComments,
   addComment,
@@ -94,4 +98,5 @@ module.exports = {
   adminGetRatings,
   deleteComment,
   queryOneLastComment,
+  exportRating,
 };

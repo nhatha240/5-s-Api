@@ -50,6 +50,7 @@ const uploadImage = function (field, type = 'single') {
         });
       }
     } catch (error) {
+      console.error(error);
       return next();
     }
   };

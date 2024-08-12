@@ -2,9 +2,8 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { adminService, userService, orderService, categoryService, commentService } = require('../services');
+const { adminService, userService, orderService, categoryService, commentService, productService } = require('../services');
 const { stringify } = require('csv-stringify');
-
 
 const getAdmins = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role', 'email', 'shop']);
@@ -164,38 +163,41 @@ const deleteCategory = catchAsync(async (req, res) => {
 
 const csvOrder = catchAsync(async (req, res) => {
   res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-order-' + Date.now() + '.csv\"');
+  res.setHeader('Content-Disposition', 'attachment; filename="' + 'download-order-' + Date.now() + '.csv"');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Pragma', 'no-cache');
-  const records = await orderService.exportOrder();
-  stringify(records, { header: true , columns[]}).pipe(res);
+  const filter = pick(req.query, ['status']);
+  const records = await orderService.exportOrder(filter);
+  stringify(records, { header: true}).pipe(res);
+  // stringify(records, { header: true, columns: [{}] }).pipe(res);
 });
 
 const csvProducts = catchAsync(async (req, res) => {
   res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-order-' + Date.now() + '.csv\"');
+  res.setHeader('Content-Disposition', 'attachment; filename="' + 'download-order-' + Date.now() + '.csv"');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Pragma', 'no-cache');
-  const records = await orderService.exportOrder();
+  const filter = pick(req.query, ['status', 'name', 'category', 'price']);
+  const records = await productService.exportProducts(filter);
   stringify(records, { header: true }).pipe(res);
-
 });
 
 const csvCustomers = catchAsync(async (req, res) => {
   res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-order-' + Date.now() + '.csv\"');
+  res.setHeader('Content-Disposition', 'attachment; filename="' + 'download-order-' + Date.now() + '.csv"');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Pragma', 'no-cache');
-  const records = await orderService.exportOrder();
+  const filter = pick(req.query, ['name', 'email', 'phone', 'address']);
+  const records = await userService.exportCustomers(filter);
   stringify(records, { header: true }).pipe(res);
 });
 
 const csvRating = catchAsync(async (req, res) => {
   res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-order-' + Date.now() + '.csv\"');
+  res.setHeader('Content-Disposition', 'attachment; filename="' + 'download-order-' + Date.now() + '.csv"');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Pragma', 'no-cache');
-  const records = await orderService.exportOrder();
+  const records = await commentService.exportRating();
   stringify(records, { header: true }).pipe(res);
 });
 

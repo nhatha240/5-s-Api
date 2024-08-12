@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { categoryService } = require('./category.service');
 
 /**
  * Create a user
@@ -100,7 +101,7 @@ const lastLoginLastTimeCount = async (time) => {
   return user;
 };
 
-const createdTotal = async (now, startOfCurrentMonth, startOfLastMonth, endOfLastMonth) => {
+const createdTotal = async (now, startOfCurrentMonth, startOfLastMonth) => {
   try {
     const newUsersThisMonth = await User.countDocuments({
       createdAt: { $gte: startOfCurrentMonth, $lt: now },
@@ -135,20 +136,47 @@ const createdTotal = async (now, startOfCurrentMonth, startOfLastMonth, endOfLas
   }
 };
 const updateUserByUserId = async (userId, updateBody) => {
-  const user = await User.findOne({ _id: userId});
+  const user = await User.findOne({ _id: userId });
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  if (updateBody.password == '' || updateBody.password == null || updateBody.password == undefined || updateBody.password.length <= 8) {
+  if (
+    updateBody.password == '' ||
+    updateBody.password == null ||
+    updateBody.password == undefined ||
+    updateBody.password.length <= 8
+  ) {
     delete updateBody.password;
   }
   Object.assign(user, updateBody);
   await user.save();
   return user;
-}
+};
+const exportCustomers = async (filter) => {
+  if (filter.email) {
+    filter.email = { $regex: filter.email, $options: 'i' };
+  }
+  if (filter.name) {
+    filter.name = { $regex: filter.name, $options: 'i' };
+  }
+  if (filter.createdAt) {
+    filter.createdAt = { $gte: filter.createdAt };
+  }
+  if (filter.lastLogin) {
+    filter.lastLogin = { $gte: filter.lastLogin };
+  }
+  if (filter.phone) {
+    filter.phone = { $regex: filter.phone, $options: 'i' };
+  }
+
+  if (filter.address) {
+    filter.address = { $regex: filter.address, $options: 'i' };
+  }
+  return User.find(filter, '-password -__v -updatedAt').sort({ createdAt: -1 }).lean();
+};
 module.exports = {
   createUser,
   queryUsers,
@@ -160,4 +188,5 @@ module.exports = {
   lastLoginLastTimeCount,
   createdTotal,
   updateUserByUserId,
+  exportCustomers,
 };

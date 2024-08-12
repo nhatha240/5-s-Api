@@ -83,7 +83,9 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
   if (options.cursor) {
     newFilter = { ...newFilter, _id: { $gt: options.cursor } };
   }
-  const query = Order.find(newFilter).populate({ path: 'idUser', select: 'name' }).populate({ path: 'idPayment', select: 'status' });
+  const query = Order.find(newFilter)
+    .populate({ path: 'idUser', select: 'name' })
+    .populate({ path: 'idPayment', select: 'status' });
   query.sort({ _id: options.sortBy === 'desc' ? -1 : 1 });
   query.limit(parseInt(options.limit) + 1); // Fetch one extra to check for next page
   const results = await query.exec();
@@ -110,10 +112,12 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
  */
 
 const getOrderById = async (idUser, orderId) => {
-  return Order.findOne({ _id: orderId, idUser: idUser })
-    .select('-idPayment -idUser')
-    // .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
-    .exec();
+  return (
+    Order.findOne({ _id: orderId, idUser: idUser })
+      .select('-idPayment -idUser')
+      // .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
+      .exec()
+  );
 };
 const getOrderByAdminId = async (orderId) => {
   return Order.findOne({ _id: orderId })
@@ -166,9 +170,7 @@ const getOrderByUser = async (userId) => {
 };
 
 const orderByUser = async (userId) => {
-  return Order.find({ idUser: userId }, '-products -__v')
-    .select('-idPayment -idUser')
-    .exec();
+  return Order.find({ idUser: userId }, '-products -__v').select('-idPayment -idUser').exec();
 };
 
 /**
@@ -234,7 +236,7 @@ const thongKeOrder = async (time) => {
   }
 };
 
-const totalMonth = async (now, startOfCurrentMonth, startOfLastMonth, endOfLastMonth) => {
+const totalMonth = async (now, startOfCurrentMonth, startOfLastMonth) => {
   try {
     const currentMonthTotal = await Order.aggregate([
       {
@@ -302,8 +304,18 @@ const ordersTotal = async (time) => {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }
 };
-
-const getMonthlyOrderStatsAndCompare = async (now, startOfCurrentMonth, startOfLastMonth, endOfLastMonth) => {
+const exportOrder = async (filter) => {
+  try {
+    return await Order.find(filter,'-__v -updatedAt ')
+      .populate({ path: 'idUser', select: 'name' })
+      .populate({ path: 'idPayment', select: 'status' })
+      .lean();
+  } catch (err) {
+    console.error('Lỗi:', err);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
+const getMonthlyOrderStatsAndCompare = async (now, startOfCurrentMonth, startOfLastMonth) => {
   try {
     const ordersThisMonth = await Order.countDocuments({
       createdAt: { $gte: startOfCurrentMonth, $lt: now },
@@ -341,4 +353,5 @@ module.exports = {
   getOrderByAdminId,
   updateStatusOrder,
   orderByUser,
+  exportOrder,
 };

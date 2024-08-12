@@ -3,7 +3,6 @@ const tokenService = require('./token.service');
 const adminService = require('./admin.service');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
-const { Logger } = require('winston');
 const emailService = require('./email.service');
 
 /**
@@ -42,6 +41,7 @@ const refreshAuthToken = async (refreshToken) => {
     await refreshTokenDoc.deleteOne();
     return tokenService.generateAuthTokens(admin, 'admins');
   } catch (error) {
+    console.log(error);
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate');
   }
 };

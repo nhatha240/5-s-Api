@@ -1,6 +1,5 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
-const { Category } = require('../models');
 
 const createCategory = {
   body: Joi.object().keys({

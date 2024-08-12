@@ -3,7 +3,6 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
-const { add } = require('winston');
 
 const userSchema = mongoose.Schema(
   {
@@ -50,14 +49,14 @@ const userSchema = mongoose.Schema(
       type: Date,
       default: Date.now
     },
-    isBlocked: {
-      type: Boolean,
-      default: false
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false
-    },
+    // isBlocked: {
+    //   type: Boolean,
+    //   default: false
+    // },
+    // isDeleted: {
+    //   type: Boolean,
+    //   default: false
+    // },
     phone: {
       type: String,
       trim: true,

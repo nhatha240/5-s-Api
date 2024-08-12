@@ -29,6 +29,7 @@ async function handleResponse(response) {
       httpStatusCode: response.status,
     };
   } catch (err) {
+    console.error(err);
     const errorMessage = await response.text();
     throw new ApiError(errorMessage);
   }

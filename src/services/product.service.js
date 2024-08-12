@@ -1,4 +1,4 @@
-const { Products, Shop, ProductLike } = require('../models');
+const { Products, Shop, ProductLike, category } = require('../models');
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
 
@@ -242,7 +242,24 @@ const deleteComment = async (productId, rating) => {
   product.userRating -= 1;
   await product.save();
 };
+const exportProducts = async (filter) => {
+  if (!filter) {
+    return Products.find({}, '-__v -updatedAt').lean();
+  }
+  if (filter.name) {
+    filter.name = { $regex: filter.name, $options: 'i' };
+  }
+  if (filter.price) {
+    filter.price = { $gte: filter.price };
+  }
+  if (filter.category) {
+    const categories = await category.find({ name: { $in: filter.category } });
+    filter.category = { $in: categories.map((c) => c._id) };
+  }
 
+
+  return Products.find(filter, '-__v -updatedAt' ).lean();
+};
 module.exports = {
   queryProducts,
   createProduct,
@@ -259,4 +276,5 @@ module.exports = {
   addComment,
   updateComment,
   deleteComment,
+  exportProducts,
 };
