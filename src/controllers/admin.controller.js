@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { adminService, userService, orderService, categoryService } = require('../services');
+const { adminService, userService, orderService, categoryService, commentService } = require('../services');
 
 const getAdmins = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role', 'email', 'shop']);
@@ -29,7 +29,6 @@ const deleteAdmin = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-
 const getUser = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'email']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
@@ -42,6 +41,11 @@ const getUserId = catchAsync(async (req, res) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
+  const result = await orderService.orderByUser(req.params.userID);
+  const comment = await commentService.queryOneLastComment(req.params.userID);
+  user.orders = result;
+  user.comments = comment;
+  console.log('user', user);
   res.send(user);
 });
 
@@ -118,7 +122,7 @@ const getCategory = catchAsync(async (req, res) => {
  */
 
 const updateCategory = catchAsync(async (req, res) => {
-  const result = await categoryService.updateCategoryById( req.body);
+  const result = await categoryService.updateCategoryById(req.body);
   res.send(result);
 });
 /**

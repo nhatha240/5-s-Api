@@ -4,7 +4,7 @@ const { toJSON, paginate } = require('./plugins');
 const productCommentSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    productId: { type: Schema.Types.ObjectId, ref: 'Products', required: true },
+    productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
     comment: { type: String, required: true },
     rating: { type: Number, required: true },
     status: { type: Boolean, required: true },

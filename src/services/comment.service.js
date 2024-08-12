@@ -8,6 +8,10 @@ const getComments = async (filter, option) => {
   return comments;
 };
 
+const queryOneLastComment = async (userId) => {
+  return await ProductComment.findOne({ userId}).populate({path: 'productId', select: 'name image options price'}).exec();
+};
+
 const addComment = async (bodyCreate) => {
   try {
     const products = productService.getProductById(bodyCreate.productId);
@@ -89,4 +93,5 @@ module.exports = {
   updateComment,
   adminGetRatings,
   deleteComment,
+  queryOneLastComment,
 };

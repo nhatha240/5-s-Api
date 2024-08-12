@@ -30,7 +30,7 @@ const orderCapture = catchAsync(async (req, res) => {
   const { orderID } = req.params;
   const { jsonResponse, httpStatusCode } = await paypalService.captureOrder(orderID);
   const { orderId } = await paypalService.updatePayment(orderID, jsonResponse.status);
-  const order = await orderService.getOrderById(orderId, req.user.id);
+  const order = await orderService.queryOrders(orderId, req.user.id);
   order.status = 'success';
   await order.save();
   req.user.totalOrder += 1;

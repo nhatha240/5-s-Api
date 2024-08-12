@@ -165,6 +165,12 @@ const getOrderByUser = async (userId) => {
     .exec();
 };
 
+const orderByUser = async (userId) => {
+  return Order.find({ idUser: userId }, '-products -__v')
+    .select('-idPayment -idUser')
+    .exec();
+};
+
 /**
  * Update order by id
  * @param {string} orderId
@@ -334,4 +340,5 @@ module.exports = {
   getOrderByUser,
   getOrderByAdminId,
   updateStatusOrder,
+  orderByUser,
 };
