@@ -139,6 +139,12 @@ const updateUserByUserId = async (userId, updateBody) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
+  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+  if (updateBody.password == '' || updateBody.password == null || updateBody.password == undefined || updateBody.password.length <= 8) {
+    delete updateBody.password;
+  }
   Object.assign(user, updateBody);
   await user.save();
   return user;
