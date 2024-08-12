@@ -1,3 +1,4 @@
+const { date } = require('joi');
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
@@ -12,6 +13,9 @@ const orderSchema = new mongoose.Schema({
   status: { type: String, default: 'pending' }, // pending, success, canceled, shipping, complete
   idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   products: [orderDetailSchema],
+  processDate: { type: Date, default: null },
+  shipDate: { type: Date, default: null },
+  deliveryDate: { type: Date, default: null },
   coupon: { type: String, default: null },
   address: String,
   phone: String,

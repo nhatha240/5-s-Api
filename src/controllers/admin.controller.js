@@ -68,7 +68,8 @@ const getOrder = catchAsync(async (req, res) => {
 });
 
 const updateOrder = catchAsync(async (req, res) => {
-  const result = await orderService.updateStatusOrder(req.params.cartId, req.body.status);
+  const body = pick(req.body, ['status', 'processDate', 'shipDate', 'deliveryDate']);
+  const result = await orderService.updateStatusOrder(req.params.cartId, body);
   res.send(result);
 });
 

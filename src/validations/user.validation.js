@@ -88,6 +88,9 @@ const updateCartStatus = {
   }),
   body: Joi.object().keys({
     status: Joi.string().required(),
+    processDate: Joi.date(),
+    shipDate: Joi.date(),
+    deliveryDate: Joi.date(),
   }),
 };
 const adminComment = {

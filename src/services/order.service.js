@@ -123,7 +123,7 @@ const getOrderByAdminId = async (orderId) => {
     .exec();
 };
 
-const updateStatusOrder = async (orderId, status) => {
+const updateStatusOrder = async (orderId, body) => {
   const order = await Order.findById(orderId);
   if (!order) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
@@ -131,7 +131,7 @@ const updateStatusOrder = async (orderId, status) => {
   if (order.status === 'canceled') {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Order has been canceled');
   }
-  order.status = status;
+  Object.assign(order, body);
   await order.save();
   return order;
 };
