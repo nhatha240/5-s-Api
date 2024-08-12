@@ -57,7 +57,7 @@ const deleteUser = catchAsync(async (req, res) => {
 
 const getOrders = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['status']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page', 'course']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page', 'cursor']);
   const result = await orderService.queryOrders(filter, options);
   res.send(result);
 });
