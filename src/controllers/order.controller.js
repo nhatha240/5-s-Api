@@ -20,7 +20,9 @@ const addOrder = catchAsync(async (req, res) => {
   }
   const order = await orderService.createOrder(userId, products, address, phone);
   const { jsonResponse, httpStatusCode } = await paypalService.createOrder(order);
-  paypalService.createPayment(jsonResponse.id, jsonResponse.status, order.totalAmount, order.id);
+  const payment = await paypalService.createPayment(jsonResponse.id, jsonResponse.status, order.totalAmount, order.id);
+  order.idPayment = payment.id;
+  await order.save();
   res.status(httpStatusCode).json(jsonResponse);
 });
 
@@ -53,7 +55,7 @@ const getOrders = catchAsync(async (req, res) => {
 });
 
 const getOrder = catchAsync(async (req, res) => {
-  const order = await orderService.getOrderById(req.user.id,req.params.orderId);
+  const order = await orderService.getOrderById(req.user.id, req.params.orderId);
   if (!order) {
     res.status(httpStatus.NOT_FOUND).json({ message: 'Order not found' });
   }

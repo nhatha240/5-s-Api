@@ -130,10 +130,10 @@ const updatePayment = async (transactionId, status) => {
   }
   payment.status = status;
   await payment.save();
-}
+};
 
 const getPaymentById = async (transactionId) => {
   const payments = await Payment.findOne({ transactionId });
   return payments;
 };
-module.exports = { createOrder, captureOrder, createPayment, updatePayment };
+module.exports = { createOrder, captureOrder, createPayment, updatePayment, getPaymentById };

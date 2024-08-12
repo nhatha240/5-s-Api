@@ -1,6 +1,4 @@
-const { date } = require('joi');
 const mongoose = require('mongoose');
-
 const { Schema } = mongoose;
 const orderDetailSchema = Schema({
   product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },

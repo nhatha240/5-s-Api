@@ -120,6 +120,7 @@ const getOrderByAdminId = async (orderId) => {
     .select('-__v')
     .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice -__v' })
     .populate({ path: 'idUser', select: '-password -__v -isDeleted -isBlocked -lastLogin' })
+    .populate({ path: 'idPayment', select: '-__v' })
     .exec();
 };
 
