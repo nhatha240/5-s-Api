@@ -34,7 +34,7 @@ const queryUsers = async (filter, options) => {
  * @returns {Promise<User>}
  */
 const getUserById = async (id) => {
-  return User.findById(id).lean();
+  return User.findById(id).select('-password -__v -role -updatedAt').lean();
 };
 
 /**
