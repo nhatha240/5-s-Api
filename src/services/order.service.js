@@ -83,7 +83,7 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
   if (options.cursor) {
     newFilter = { ...newFilter, _id: { $gt: options.cursor } };
   }
-  const query = Order.find(newFilter).populate({ path: 'idUser', select: 'name' }).populate({ path: 'idPayment', select: 'status' });
+  const query = Order.find(newFilter).populate({ path: 'idUser', select: 'name' }).populate({ path: 'idPayment', select: 'status -idUser' });
   query.sort({ _id: options.sortBy === 'desc' ? -1 : 1 });
   query.limit(parseInt(options.limit) + 1); // Fetch one extra to check for next page
   const results = await query.exec();
@@ -120,7 +120,7 @@ const getOrderByAdminId = async (orderId) => {
     .select('-__v')
     .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice -__v' })
     .populate({ path: 'idUser', select: '-password -__v -isDeleted -isBlocked -lastLogin' })
-    .populate({ path: 'idPayment', select: '-__v -orderId -createdAt -updatedAt -method' })
+    .populate({ path: 'idPayment', select: '-__v -orderId -createdAt -updatedAt' })
     .exec();
 };
 
