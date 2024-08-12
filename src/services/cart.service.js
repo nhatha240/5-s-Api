@@ -3,7 +3,7 @@ const { Cart, Products } = require('../models');
 // const ApiError = require('../utils/ApiError');
 
 const getCart = async (userId) => {
-  return Cart.findOne({ userId }).select('-userId');
+  return Cart.findOne({ userId }).select('-userId -createdAt -updatedAt -__v').populate('products.product', '-__v -createdAt -updatedAt -quantity -description -category');
 };
 
 const addCart = async (userId, productId, quantity) => {

@@ -19,6 +19,9 @@ const createProduct = catchAsync(async (req, res) => {
     'tags',
   ]);
   body.image = body.image ?? ['public/uploads/products/default.jpg'];
+  if(body.discountPrice < body.price) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Discount price must be less than price');
+  }
   body.options = pick(req.body, ['size', 'color']);
   body.category = await categoryService.getCategoryByIds(body.category);
   body.category.forEach(async (categoryId) => {

@@ -33,15 +33,32 @@ const updateComment = async (userId, commentId, commentValue, rating) => {
   }
   if (rating) {
     const addRating = rating - comment.rating;
-    productService.addComment(comment.productId, addRating);
+    productService.updateComment(comment.productId, addRating);
     comment.rating = rating;
   }
   comment.comment = commentValue;
   return comment.save();
 };
+
+const adminGetRatings = async (filter, option) => {
+  const comments = await ProductComment.paginate(filter, option);
+  return comments;
+};
+
+const deleteComment = async (commentId) => {
+  const comment = await ProductComment.findOne({ _id: commentId });
+  if (!comment) {
+    throw new Error('Comment not found');
+  }
+  const rating = comment.rating;
+  await productService.deleteComment(comment.productId, rating);
+  return comment.remove();
+}
 module.exports = {
   getComments,
   addComment,
   approveComment,
   updateComment,
+  adminGetRatings,
+  deleteComment,
 };

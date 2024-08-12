@@ -225,6 +225,24 @@ const addComment = async (productId, rating) => {
   product.userRating += 1;
   await product.save();
 };
+const updateComment = async (productId, rating) => {
+  const product = await Products.findOne({ _id: productId });
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+  product.totalRating += rating;
+  await product.save();
+};
+
+const deleteComment = async (productId, rating) => {
+  const product = await Products.findOne({ _id: productId });
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+  product.totalRating -= rating;
+  product.userRating -= 1;
+  await product.save();
+};
 
 module.exports = {
   queryProducts,
@@ -240,4 +258,6 @@ module.exports = {
   likeProduct,
   unlikeProduct,
   addComment,
+  updateComment,
+  deleteComment,
 };

@@ -1,7 +1,7 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
-const { authValidation, productValidation, categoryValidation } = require('../../validations');
-const { authAdminController, adminController, productController } = require('../../controllers');
+const { authValidation, productValidation, categoryValidation, userValidation } = require('../../validations');
+const { authAdminController, adminController, productController, commentsController } = require('../../controllers');
 const admin = require('../../middlewares/admin');
 const uploadImage = require('../../middlewares/upload');
 
@@ -55,8 +55,8 @@ router.delete(
 /*
  * user routes
  */
-router.get('/get-user', admin('SuperAdmin'), adminController.getUser);
-router.get('/get-user/:userID', admin('SuperAdmin'), adminController.getUserId);
+router.get('/customers', admin('SuperAdmin'), adminController.getUser);
+router.get('/customer/:userID', admin('SuperAdmin'), adminController.getUserId);
 router.put('/update-user/:userID', uploadImage('image'), admin('SuperAdmin'), adminController.updateUser);
 router.delete('/delete-user/:userID', admin('SuperAdmin'), adminController.deleteUser);
 /*
@@ -86,5 +86,11 @@ router.delete('/delete-category/:id', admin(), validate(categoryValidation.delet
 // router.put('/update-subcategory/:id', admin(), validate(subCategoryValidation.updateSubCategory), adminController.updateSubCategory);
 // router.delete('/delete-subcategory/:id', admin(), validate(subCategoryValidation.deleteSubCategory), adminController.deleteSubCategory);
 
+/**
+ * rating routes
+ */
+router.get('/list-rating', admin(), commentsController.getRatings);
+router.put('/rating', admin(), validate(userValidation.adminComment), commentsController.approveComment);
+router.delete('/rating/:id', admin(), commentsController.deleteComment);
 
 module.exports = router;

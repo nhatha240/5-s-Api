@@ -12,7 +12,8 @@ const getCategories = catchAsync(async (req, res) => {
 });
 const getComments = catchAsync(async (req, res) => {
   const { productId } = req.params;
-  const filter = { productId };
+  const status = true;
+  const filter = { productId, status };
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await commentService.getComments(filter, options);
   res.status(httpStatus.OK).send(result);

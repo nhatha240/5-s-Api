@@ -83,6 +83,13 @@ const deleteCart = {
   }),
 };
 
+const adminComment = {
+  body: Joi.object().keys({
+    commentId: Joi.string().custom(objectId),
+    status: Joi.boolean().required(),
+  }),
+};
+
 module.exports = {
   createUser,
   getUsers,
@@ -95,4 +102,5 @@ module.exports = {
   updateComment,
   addCart,
   deleteCart,
+  adminComment,
 };
