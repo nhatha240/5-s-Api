@@ -41,10 +41,11 @@ const updateComment = catchAsync(async (req, res) => {
 });
 
 const getRatings = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'category']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  const filter = pick(req.query, ['userId', 'productId']);
+  const options = pick(req.query, ['sortBy', 'limit', 'cursor']);
+  options.limit = options.limit ? parseInt(options.limit) : 10;
   const result = await commentService.adminGetRatings(filter, options);
-  res.send(result);
+  res.status(httpStatus.OK).send(result);
 });
 
 const deleteComment = catchAsync(async (req, res) => {
