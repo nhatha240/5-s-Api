@@ -55,7 +55,6 @@ const getOrders = catchAsync(async (req, res) => {
 const getOrder = catchAsync(async (req, res) => {
   const order = await orderService.getOrderById(req.user.id,req.params.orderId);
   if (!order) {
-    console.log('Order not found', order);
     res.status(httpStatus.NOT_FOUND).json({ message: 'Order not found' });
   }
   res.send(order);

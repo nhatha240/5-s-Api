@@ -43,7 +43,6 @@ const cancelOrder = async (userId, transactionId) => {
   }
 
   if (order.status !== 'pending') {
-    console.log('Order cannot be canceled', order);
     throw new ApiError(httpStatus.BAD_REQUEST, 'Order cannot be canceled');
   }
 
@@ -86,11 +85,19 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
   }
   const query = Order.find(newFilter);
   query.sort({ _id: options.sortBy === 'desc' ? -1 : 1 });
-  query.limit(options.pageSize + 1); // Fetch one extra to check for next page
+  query.limit(parseInt(options.limit) + 1); // Fetch one extra to check for next page
   const results = await query.exec();
+
+  // Check if the extra document was fetched
+  const hasNextPage = results.length > options.limit;
+
   const prevCursor = options.cursor && results.length > 0 ? results[0]._id : null;
-  const nextCursor = results.length > 0 ? results[results.length - 1]._id : null;
+  const nextCursor = hasNextPage ? results[results.length - 1]._id : null;
+  if (hasNextPage) {
+    results.pop(); // Remove the extra document
+  }
   return {
+    limit: options.limit,
     nextCursor,
     prevCursor,
     totalResults: results.length,
@@ -121,7 +128,7 @@ const updateStatusOrder = async (orderId, status) => {
   if (!order) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  if(order.status === 'canceled'){
+  if (order.status === 'canceled') {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Order has been canceled');
   }
   order.status = status;
@@ -232,10 +239,6 @@ const totalMonth = async (now, startOfCurrentMonth, startOfLastMonth, endOfLastM
     const lastMonthAmount = lastMonthTotal.length > 0 ? lastMonthTotal[0].totalAmount : 0;
 
     const percentageChange = lastMonthAmount === 0 ? 100 : ((currentMonthAmount - lastMonthAmount) / lastMonthAmount) * 100;
-
-    console.log('Current month total:', currentMonthAmount);
-    console.log('Last month total:', lastMonthAmount);
-    console.log('Percentage change:', percentageChange);
 
     return {
       currentMonthAmount,

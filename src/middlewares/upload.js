@@ -13,7 +13,6 @@ const uploadImage = function (field, type = 'single') {
             return next();
             // return res.status(400).send({ message: 'No file uploaded' });
           } else {
-            console.log('req.file', req.file);
             req.body[field] = req.file.path;
             return next();
           }
@@ -51,8 +50,6 @@ const uploadImage = function (field, type = 'single') {
         });
       }
     } catch (error) {
-      console.log(error);
-      console.log('error file', req.files);
       return next();
     }
   };

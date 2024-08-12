@@ -36,7 +36,6 @@ const bieuDo = catchAsync(async (req, res) => {
       lastLoginLastTimeCount,
     });
   } catch (error) {
-    console.log(error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }
 });

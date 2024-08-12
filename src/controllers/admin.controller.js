@@ -57,13 +57,12 @@ const deleteUser = catchAsync(async (req, res) => {
 
 const getOrders = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['status']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page', 'cursor']);
+  const options = pick(req.query, ['sortBy', 'limit', 'cursor']);
   const result = await orderService.queryOrders(filter, options);
   res.send(result);
 });
 
 const getOrder = catchAsync(async (req, res) => {
-  console.log('req.params.id', req.params.id);
   const result = await orderService.getOrderByAdminId(req.params.id);
   res.send(result);
 });

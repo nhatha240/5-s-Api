@@ -11,11 +11,9 @@ const getAdminByEmail = async (email) => {
 };
 
 const createAdmin = async (body) => {
-  console.log('body', body);
   if (await Admins.isEmailTaken(body.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  console.log('body create');
   return Admins.create(body);
 };
 

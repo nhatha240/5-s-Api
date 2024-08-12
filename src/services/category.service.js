@@ -43,7 +43,6 @@ const getCategoryById = async (categoryId) => {
     }
     const products = await Products.find({ category: categoryId }).limit(10);
     category.products = products;
-    console.log('category', category);
     return category;
   } catch (error) {
     console.error('Error fetching category:', error);
@@ -112,8 +111,7 @@ const updateItemsCount = async (categoryId, increment) => {
       throw new Error('Category not found');
     }
     category.itemsCount += increment;
-    const updatedCategory = await category.save();
-    console.log('Category updated:', updatedCategory);
+    return await category.save();
   } catch (err) {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
   }

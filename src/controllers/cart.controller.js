@@ -10,8 +10,6 @@ const addCart = catchAsync(async (req, res) => {
 
 const getCart = catchAsync(async (req, res) => {
   const result = await cartService.getCart(req.user.id);
-  console.log('cart', result);
-  console.log('cart', req.user.id);
   res.send(result);
 });
 

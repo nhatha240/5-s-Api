@@ -58,7 +58,6 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
 
 async function createProduct(productBody) {
   try {
-    console.log('productBody', productBody);
     const product = await Products.create(productBody);
     return product;
   } catch (error) {
