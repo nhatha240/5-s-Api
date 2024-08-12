@@ -120,7 +120,7 @@ const getOrderByAdminId = async (orderId) => {
     .select('-__v')
     .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice -__v' })
     .populate({ path: 'idUser', select: '-password -__v -isDeleted -isBlocked -lastLogin' })
-    .populate({ path: 'idPayment', select: '-__v' })
+    .populate({ path: 'idPayment', select: '-__v -orderId -createdAt -updatedAt -method' })
     .exec();
 };
 
@@ -132,10 +132,32 @@ const updateStatusOrder = async (orderId, body) => {
   if (order.status === 'canceled') {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Order has been canceled');
   }
+  if (body.status === 'process') {
+    body.processDate = new Date();
+  }
+  if (body.status === 'shipping') {
+    body.shipDate = new Date();
+    const shipping = Str_Random(10);
+    Payment.findOneAndUpdate({ orderId }, { shippingCode: shipping }).exec();
+  }
+  if (body.status === 'complete') {
+    body.deliveryDate = new Date();
+  }
   Object.assign(order, body);
   await order.save();
   return order;
 };
+function Str_Random(length) {
+  let result = '';
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+  // Loop to generate characters for the specified length
+  for (let i = 0; i < length; i++) {
+    const randomInd = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomInd);
+  }
+  return result;
+}
 const getOrderByUser = async (userId) => {
   return Order.find({ idUser: userId })
     .select('-idPayment -idUser')

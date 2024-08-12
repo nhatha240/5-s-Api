@@ -9,6 +9,7 @@ const paymentSchema = new Schema(
     method: { type: String, required: true }, // e.g., 'Credit Card', 'PayPal', 'Bank Transfer'
     status: { type: String, default: 'pending' }, // e.g., 'pending', 'completed', 'failed', 'canceled', 'refunded'
     transactionId: { type: String },
+    shippingCode: { type: String, default: null },
   },
   {
     timestamps: true,
