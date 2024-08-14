@@ -135,6 +135,7 @@ const createdTotal = async (now, startOfCurrentMonth, startOfLastMonth) => {
     console.error('Lỗi:', err);
   }
 };
+
 const updateUserByUserId = async (userId, updateBody) => {
   const user = await User.findOne({ _id: userId });
   if (!user) {

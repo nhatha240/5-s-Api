@@ -197,7 +197,8 @@ const csvRating = catchAsync(async (req, res) => {
   res.setHeader('Content-Disposition', 'attachment; filename="' + 'download-order-' + Date.now() + '.csv"');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Pragma', 'no-cache');
-  const records = await commentService.exportRating();
+  const filter = pick(req.query, ['name', 'email', 'phone', 'address']);
+  const records = await commentService.exportRating(filter);
   stringify(records, { header: true }).pipe(res);
 });
 

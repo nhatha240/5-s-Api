@@ -1,6 +1,6 @@
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
-const { ProductComment } = require('../models');
+const { ProductComment, User } = require('../models');
 const { productService } = require('./index');
 
 const getComments = async (filter, option) => {
@@ -88,7 +88,9 @@ const deleteComment = async (commentId) => {
 };
 
 const exportRating = async (filter) => {
-  return await ProductComment.find(filter, '-__v -updatedAt -').populate({ path: 'productId', select: 'name image price options discountPrice isSale isBestSeller quantity totalRating userRating' }).name();
+  const users = await User.find(filter).exec(); // Step 1: Find all users based on the filter
+  const userIds = users.map(user => user._id); // Step 2: Extract the IDs of these users
+  return await ProductComment.find({ userId: { $in: userIds } }, '-__v -updatedAt -').populate({ path: 'productId', select: 'name image price options discountPrice isSale isBestSeller quantity totalRating userRating' }).name();
 };
 module.exports = {
   getComments,
