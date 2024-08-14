@@ -338,6 +338,44 @@ const getMonthlyOrderStatsAndCompare = async (now, startOfCurrentMonth, startOfL
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }
 };
+
+const topProduct  = async (time) => {
+  const topProduct = await Order.aggregate([
+    {
+      $match: {
+        createdAt: { $gte: time },
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $group: {
+        _id: '$products.product',
+        total: { $sum: '$products.quantity' },
+      },
+    },
+    {
+      $sort: { total: -1 },
+    },
+    {
+      $limit: 5,
+    },
+  ]);
+  const topProductIds = topProduct.map((item) => item._id);
+  const products = await Products.find({ _id: { $in: topProductIds } }).select('-status -isBestSeller -quantity -description -discountPrice').lean();
+  const productsMap = products.reduce((acc, curr) => {
+    acc[curr._id] = curr;
+    return acc;
+  }, {});
+  const result = topProduct.map((item) => {
+    return {
+      ...item,
+      product: productsMap[item._id],
+    };
+  });
+  return result;
+};
 module.exports = {
   queryOrders,
   getOrderById,
@@ -354,4 +392,5 @@ module.exports = {
   updateStatusOrder,
   orderByUser,
   exportOrder,
+  topProduct,
 };

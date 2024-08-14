@@ -102,9 +102,21 @@ const total = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }
 });
+const topProduct = catchAsync(async (req, res) => {
+  const time = new Date();
+  time.setDate(time.getDate() - 7);
+  try {
+    const topProduct = await orderService.topProduct(time);
+    res.send(topProduct);
+  } catch (error) {
+    console.log(error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+});
 
 module.exports = {
   bieuDo,
   bayNgay,
   total,
+  topProduct,
 };

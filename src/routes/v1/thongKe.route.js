@@ -6,5 +6,6 @@ const router = express.Router();
 router.get('/bieu-do', admin(), thongKeController.bieuDo);
 router.get('/seven-day', admin(), thongKeController.bayNgay);
 router.get('/total', admin(), thongKeController.total);
+router.get('/top-product', admin(), thongKeController.topProduct);
 
 module.exports = router;
