@@ -1,15 +1,20 @@
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
-const { ProductComment, User } = require('../models');
+const { ProductComment, User, Products } = require('../models');
 const { productService } = require('./index');
 
 const getComments = async (filter, option) => {
-  const comments = await ProductComment.paginate(filter, option);
+  const products = await Products.find(filter).exec();
+  if (!products || products.length === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+  const productId = products.map((product) => product._id);
+  const comments = await ProductComment.paginate({ productId: { $in: productId } }, option);
   return comments;
 };
 
 const queryOneLastComment = async (userId) => {
-  return await ProductComment.findOne({ userId}).populate({path: 'productId', select: 'name image options price'}).exec();
+  return await ProductComment.findOne({ userId }).populate({ path: 'productId', select: 'name image options price' }).exec();
 };
 
 const addComment = async (bodyCreate) => {
@@ -76,7 +81,14 @@ const adminGetRatings = async (filter, options = { cursor: null, limit: 10 }) =>
     results,
   };
 };
-
+const getRating = async (id) => {
+  return await ProductComment.findOne({ _id: id })
+    .populate({
+      path: 'productId',
+      select: 'name image price options discountPrice isSale isBestSeller quantity totalRating userRating',
+    })
+    .exec();
+};
 const deleteComment = async (commentId) => {
   const comment = await ProductComment.findOne({ _id: commentId });
   if (!comment) {
@@ -89,8 +101,13 @@ const deleteComment = async (commentId) => {
 
 const exportRating = async (filter) => {
   const users = await User.find(filter).exec(); // Step 1: Find all users based on the filter
-  const userIds = users.map(user => user._id); // Step 2: Extract the IDs of these users
-  return await ProductComment.find({ userId: { $in: userIds } }, '-__v -updatedAt -').populate({ path: 'productId', select: 'name image price options discountPrice isSale isBestSeller quantity totalRating userRating' }).name();
+  const userIds = users.map((user) => user._id); // Step 2: Extract the IDs of these users
+  return await ProductComment.find({ userId: { $in: userIds } }, '-__v -updatedAt -')
+    .populate({
+      path: 'productId',
+      select: 'name image price options discountPrice isSale isBestSeller quantity totalRating userRating',
+    })
+    .name();
 };
 module.exports = {
   getComments,
@@ -101,4 +118,5 @@ module.exports = {
   deleteComment,
   queryOneLastComment,
   exportRating,
+  getRating,
 };

@@ -115,7 +115,7 @@ const getOrderById = async (idUser, orderId) => {
   return (
     Order.findOne({ _id: orderId, idUser: idUser })
       .select('-idPayment -idUser')
-      // .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
+      .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
       .exec()
   );
 };

@@ -7,7 +7,6 @@ const logger = require('../config/logger');
 
 const getComments = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['status', 'productId']);
-  filter.status = true;
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await commentService.getComments(filter, options);
   res.send(result);
@@ -33,7 +32,7 @@ const approveComment = catchAsync(async (req, res) => {
 const updateComment = catchAsync(async (req, res) => {
   try {
     commentService.updateComment(req.user.id, req.body.commentId, req.body.comment, req.body.rating);
-    res.status(httpStatus.ACCEPTED).send({ message: 'Comment updated successfully' });
+    res.status(httpStatus.OK).send({ message: 'Comment updated successfully' });
   } catch (error) {
     logger.error(error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error updating comment');
@@ -48,6 +47,13 @@ const getRatings = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(result);
 });
 
+const getRating = catchAsync(async (req, res) => {
+  const rating = await commentService.getRating(req.params.id);
+  if (!rating) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
+  }
+  res.send(rating);
+});
 const deleteComment = catchAsync(async (req, res) => {
   await commentService.deleteComment(req.params.commentId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -59,4 +65,5 @@ module.exports = {
   updateComment,
   getRatings,
   deleteComment,
+  getRating,
 };

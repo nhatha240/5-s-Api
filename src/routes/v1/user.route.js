@@ -9,8 +9,10 @@ const router = express.Router();
 
 router.post('/like', auth(), validate(userValidation.like), userController.likeProduct);
 router.post('/unlike', auth(), validate(userValidation.unlike), userController.unlikeProduct);
-router.post('/comment', auth(), validate(userValidation.comment), commentsController.addComment);
-router.post('/update-comment', auth(), validate(userValidation.updateComment), commentsController.updateComment);
+router.post('/rating', auth(), validate(userValidation.comment), commentsController.addComment);
+router.put('/rating', auth(), validate(userValidation.updateComment), commentsController.updateComment);
+router.get('/rating', auth(), validate(userValidation.getRatings), commentsController.getComments);
+router.get('/rating/:id', auth(), validate(userValidation.getRating), commentsController.getRating);
 router.post('/add-cart', auth(), validate(userValidation.addCart), cartController.addCart);
 router.get('/list-cart', auth(), cartController.getCart);
 router.post('/remove-cart', auth(), cartController.removeCart);

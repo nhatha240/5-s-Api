@@ -70,6 +70,20 @@ const updateComment = {
     commentId: Joi.string().custom(objectId),
   }),
 };
+
+const getRatings = {
+  params: Joi.object().keys({
+    comment: Joi.string(),
+    products: Joi.string(),
+  }),
+};
+
+const getRating = {
+  params: Joi.object().keys({
+    id: Joi.string(),
+  }),
+
+};
 const addCart = {
   body: Joi.object().keys({
     productId: Joi.string().required().custom(objectId),
@@ -114,4 +128,6 @@ module.exports = {
   deleteCart,
   adminComment,
   updateCartStatus,
+  getRatings,
+  getRating,
 };
