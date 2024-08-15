@@ -22,7 +22,7 @@ const orderPayment = {
 
 const order = {
   params: Joi.object().keys({
-    orderId: Joi.string().required(),
+    orderID: Joi.string().required(),
   }),
 };
 const cancelOrder = {

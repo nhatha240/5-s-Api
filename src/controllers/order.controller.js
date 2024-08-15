@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 // const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { orderService, paypalService, commentService } = require('../services');
+const { orderService, paypalService, commentService, cartService } = require('../services');
 const pick = require('../utils/pick');
 // const Stripe = require('stripe');
 // const env = require('../config/config');
@@ -35,6 +35,7 @@ const orderCapture = catchAsync(async (req, res) => {
   await order.save();
   req.user.totalOrder += 1;
   req.user.totalMoney += order.totalAmount;
+  cartService.deleteCart(req.user.id);
   res.status(httpStatusCode).json(jsonResponse);
 });
 

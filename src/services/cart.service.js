@@ -101,9 +101,16 @@ const removeCart = async (userId, productId) => {
   await cart.save();
   return cart;
 };
+
+const deleteCart = async (userId) => {
+  const cart = await Cart.deleteOne({ userId: userId });
+  cart.products = [];
+  cart.save();
+}
 module.exports = {
   getCart,
   addCart,
   thongKeProduct,
   removeCart,
+  deleteCart,
 };
