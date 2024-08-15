@@ -59,7 +59,7 @@ const getOrder = catchAsync(async (req, res) => {
   order.user = req.user;
   order.products = await Promise.all(order.products.map(async (product) => {
     console.log(product.product._id);
-    product.product.comments = await commentService.getCommentsByProduct(product.product._id, req.user.id);
+    product.product.rating = await commentService.getCommentsByProduct(product.product._id, req.user.id);
     return product;
   }));
   res.send(order);
