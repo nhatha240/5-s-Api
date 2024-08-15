@@ -112,12 +112,10 @@ const queryOrders = async (filter = { status: 1 }, options = { cursor: null, lim
  */
 
 const getOrderById = async (idUser, orderId) => {
-  return (
-    Order.findOne({ _id: orderId, idUser: idUser })
-      .select('-idPayment -idUser')
-      .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
-      .exec()
-  );
+  return Order.findOne({ _id: orderId, idUser: idUser })
+    .select('-idPayment -idUser')
+    .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
+    .lean();
 };
 const getOrderByAdminId = async (orderId) => {
   return Order.findOne({ _id: orderId })
@@ -306,7 +304,7 @@ const ordersTotal = async (time) => {
 };
 const exportOrder = async (filter) => {
   try {
-    return await Order.find(filter,'-__v -updatedAt ')
+    return await Order.find(filter, '-__v -updatedAt ')
       .populate({ path: 'idUser', select: 'name' })
       .populate({ path: 'idPayment', select: 'status' })
       .lean();
@@ -339,7 +337,7 @@ const getMonthlyOrderStatsAndCompare = async (now, startOfCurrentMonth, startOfL
   }
 };
 
-const topProduct  = async (time) => {
+const topProduct = async (time) => {
   const topProduct = await Order.aggregate([
     {
       $match: {
@@ -363,7 +361,9 @@ const topProduct  = async (time) => {
     },
   ]);
   const topProductIds = topProduct.map((item) => item._id);
-  const products = await Products.find({ _id: { $in: topProductIds } }).select('-status -isBestSeller -quantity -description -discountPrice').lean();
+  const products = await Products.find({ _id: { $in: topProductIds } })
+    .select('-status -isBestSeller -quantity -description -discountPrice')
+    .lean();
   const productsMap = products.reduce((acc, curr) => {
     acc[curr._id] = curr;
     return acc;

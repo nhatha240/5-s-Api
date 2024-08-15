@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 // const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { orderService, paypalService } = require('../services');
+const { orderService, paypalService, commentService } = require('../services');
 const pick = require('../utils/pick');
 // const Stripe = require('stripe');
 // const env = require('../config/config');
@@ -56,6 +56,12 @@ const getOrder = catchAsync(async (req, res) => {
   if (!order) {
     res.status(httpStatus.NOT_FOUND).json({ message: 'Order not found' });
   }
+  order.user = req.user;
+  order.products = await Promise.all(order.products.map(async (product) => {
+    console.log(product.product._id);
+    product.product.comments = await commentService.getCommentsByProduct(product.product._id, req.user.id);
+    return product;
+  }));
   res.send(order);
 });
 

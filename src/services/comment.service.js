@@ -109,6 +109,12 @@ const exportRating = async (filter) => {
     })
     .name();
 };
+
+const getCommentsByProduct = async (productId, userId) => {
+  const comment =  await ProductComment.find({ productId, userId }).exec();
+  const commentId = comment.map((comment) => comment._id);
+  return commentId;
+};
 module.exports = {
   getComments,
   addComment,
@@ -119,4 +125,5 @@ module.exports = {
   queryOneLastComment,
   exportRating,
   getRating,
+  getCommentsByProduct,
 };
