@@ -25,6 +25,13 @@ const order = {
     orderID: Joi.string().required(),
   }),
 };
+
+const orderId = {
+  params: Joi.object().keys({
+    orderId: Joi.string().required(),
+  }),
+};
+
 const cancelOrder = {
   body: Joi.object().keys({
     paymentId: Joi.string().required(),
@@ -35,5 +42,6 @@ module.exports = {
   orderPayment,
   order,
   cancelOrder,
+  orderId,
 };
 

@@ -19,7 +19,7 @@ router.post('/remove-cart', auth(), cartController.removeCart);
 router.post('/add-order', auth(), validate(orderValidation.addOrder), orderController.addOrder);
 router.get('/orders', auth(), orderController.getOrders); // get order by user id
 router.post('/order/:orderID/capture', auth(), validate(orderValidation.order), orderController.orderCapture); // get order by id
-router.get('/order/:orderId', auth(), validate(orderValidation.order), orderController.getOrder); // get order by id
+router.get('/order/:orderId', auth(), validate(orderValidation.orderId), orderController.getOrder); // get order by id
 router.post('/cancel-order', auth(), validate(orderValidation.cancelOrder), orderController.cancelOrder);
 
 router
