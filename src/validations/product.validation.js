@@ -22,6 +22,10 @@ const createProduct = {
     isBestSeller: Joi.boolean(),
     quantity: Joi.number().required(),
     tags: Joi.array(),
+    isFastSale: Joi.boolean(),
+    fastSalePrice: Joi.number(),
+    fastSaleStartDate: Joi.date(),
+    fastSaleEndDate: Joi.date(),
   }),
 };
 
@@ -44,6 +48,10 @@ const updateProduct = {
       isBestSeller: Joi.boolean(),
       quantity: Joi.number(),
       tags: Joi.array(),
+      isFastSale: Joi.boolean(),
+      fastSalePrice: Joi.number(),
+      fastSaleStartDate: Joi.date(),
+      fastSaleEndDate: Joi.date(),
     })
     .min(1),
 };

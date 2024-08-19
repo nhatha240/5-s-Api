@@ -58,11 +58,19 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
 
 async function createProduct(productBody) {
   try {
+    await Products.find({ name: productBody.name }).then((product) => {
+      if (product) {
+        throw new Error( 'Product already exists');
+      }
+    }).catch((error) => {
+      throw new Error(error);
+    });
+    console.log('productBody', productBody);
     const product = await Products.create(productBody);
     return product;
   } catch (error) {
     console.log('error create', error);
-    throw new Error('Error creating product', error);
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message);
   }
 }
 

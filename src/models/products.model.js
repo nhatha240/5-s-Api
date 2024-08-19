@@ -19,6 +19,10 @@ const productsSchema = new Schema(
     tags: [{ type: String }],
     totalRating: { type: Number, default: 0 },
     userRating: { type: Number, default: 0 },
+    isFastSale: { type: Boolean, default: false },
+    fastSalePrice: { type: Number },
+    fastSaleStartDate: { type: Date },
+    fastSaleEndDate: { type: Date },
     options: [
       {
         size: [{ type: String }],

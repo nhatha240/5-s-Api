@@ -17,6 +17,10 @@ const createProduct = catchAsync(async (req, res) => {
     'isBestSeller',
     'quantity',
     'tags',
+    'isFastSale',
+    'fastSalePrice',
+    'fastSaleStartDate',
+    'fastSaleEndDate',
   ]);
   body.image = body.image ?? ['public/uploads/products/default.jpg'];
   if(body.discountPrice < body.price) {
@@ -32,7 +36,7 @@ const createProduct = catchAsync(async (req, res) => {
 });
 
 const getProducts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'category']);
+  const filter = pick(req.query, ['name', 'category', 'isBestSeller', 'isFastSale', ]);
   const options = pick(req.query, ['sortBy', 'limit', 'cursor']);
   const result = await productService.queryProducts(filter, options);
   res.send(result);
@@ -69,6 +73,10 @@ const updateProduct = catchAsync(async (req, res) => {
     'isBestSeller',
     'quantity',
     'tags',
+    'isFastSale',
+    'fastSalePrice',
+    'fastSaleStartDate',
+    'fastSaleEndDate',
   ]);
   body.image = body.image ?? ['public/uploads/products/default.jpg'];
   body.options = pick(req.body, ['size', 'color']);
