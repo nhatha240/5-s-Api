@@ -11,6 +11,8 @@ const httpStatus = require('http-status');
  */
 async function queryProducts(filter = {}, options = { cursor: null, limit: 10 }) {
   const newFilter = {};
+
+  // Transform filter to support $in operator for arrays
   Object.entries(filter).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       newFilter[key] = { $in: value };
@@ -19,35 +21,50 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
     }
   });
 
+  let query;
+
+  // Handle cursor-based pagination
   if (options.cursor) {
-    newFilter._id = { $gt: options.cursor };
-    const query = Products.find(newFilter);
-    const updatedLimit = options.limit ? options.limit + 1 : 10;
-    query.limit(updatedLimit + 1);
-
-    try {
-      // Execute the query
-      const results = await query.exec();
-
-      // Determine the previous and next cursors
-      const prevCursor = options.cursor && results.length > 0 ? results[0]._id : null;
-      const nextCursor = results.length > updatedLimit ? results[results.length - 1]._id : null;
-
-      // Return the paginated results
-      return {
-        nextCursor,
-        prevCursor,
-        totalResults: results.length,
-        results: results.slice(0, options.limit), // Exclude the extra item if present
-      };
-    } catch (error) {
-      throw new Error(`Error fetching results: ${error.message}`);
+    // If cursor is provided, check if it’s for the next or previous page
+    if (options.cursor === 'prev') {
+      // Handle fetching the previous page
+      query = Products.find(newFilter).sort({_id: -1});
+      const updatedLimit = options.limit ? options.limit + 1 : 11;
+      query = query.limit(updatedLimit);
+    } else {
+      // Handle fetching the next page
+      newFilter._id = { $gt: options.cursor };
+      query = Products.find(newFilter);
+      const updatedLimit = options.limit ? options.limit + 1 : 11;
+      query = query.limit(updatedLimit);
     }
   } else {
-    const query = Products.paginate(newFilter, options);
-    return query;
+    // No cursor, regular pagination
+    query = Products.find(newFilter);
+    const updatedLimit = options.limit ? options.limit : 10;
+    query = query.limit(updatedLimit);
+  }
+
+  try {
+    // Execute the query
+    const results = await query.exec();
+
+    // Determine the next and previous cursors
+    const prevCursor = results.length > 0 ? results[0]._id : null;
+    const nextCursor = results.length === (options.limit + 1) ? results[results.length - 1]._id : null;
+
+    // Return the paginated results
+    return {
+      nextCursor,
+      prevCursor,
+      totalResults: results.length > options.limit ? results.length - 1 : results.length,
+      results: results.slice(0, options.limit), // Exclude the extra item if present
+    };
+  } catch (error) {
+    throw new Error(`Error fetching results: ${error.message}`);
   }
 }
+
 
 /**
  * Create a product

@@ -1,5 +1,6 @@
 const upload = require('../config/uploadFile');
 const multer = require('multer');
+const {Images} = require('../models/index');
 const uploadImage = function (field, type = 'single') {
   return async (req, res, next) => {
     try {
@@ -14,6 +15,7 @@ const uploadImage = function (field, type = 'single') {
             // return res.status(400).send({ message: 'No file uploaded' });
           } else {
             req.body[field] = req.file.path;
+            Images.create({path: req.file.path})
             return next();
           }
         });
@@ -26,7 +28,11 @@ const uploadImage = function (field, type = 'single') {
           } else if (!req.files || req.files.length === 0) {
             return next();
           } else {
-            req.body[field] = req.files.map((file) => file.path);
+            req.body[field] = req.files.map((file) => {
+              const filepath = file.path
+              Images.create({path: filepath})
+              return filepath;
+            });
             return next();
           }
         });
@@ -42,7 +48,11 @@ const uploadImage = function (field, type = 'single') {
             field.forEach((fieldObj) => {
               const fieldName = fieldObj.name;
               if (req.files[fieldName]) {
-                req.body[fieldName] = req.files[fieldName].map((file) => file.path);
+                req.body[fieldName] = req.files[fieldName].map((file) => {
+                  const filepath = file.path
+                  Images.create({path: filepath})
+                  return filepath;
+                });
               }
             });
             return next();
