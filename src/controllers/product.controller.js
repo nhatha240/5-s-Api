@@ -37,8 +37,15 @@ const createProduct = catchAsync(async (req, res) => {
 });
 
 const getProducts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'category', 'isBestSeller', 'isFastSale', ]);
-  const options = pick(req.query, ['sortBy', 'limit', 'cursor']);
+  const filter = pick(req.query, ['name', 'bestSeller', 'fastSale','trending' ]);
+  filter.status = 'public';
+  const options = pick(req.query, ['sortBy', 'limit', 'cursor', 'action']);
+  const result = await productService.queryProducts(filter, options);
+  res.send(result);
+});
+const getAdminProducts = catchAsync(async (req, res) => {
+  const filter = pick(req.query, ['name', 'bestSeller', 'fastSale','trending' ]);
+  const options = pick(req.query, ['sortBy', 'limit', 'cursor', 'action']);
   const result = await productService.queryProducts(filter, options);
   res.send(result);
 });
@@ -127,4 +134,17 @@ const deleteProduct = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-module.exports = { getProducts, createProduct, getProductById, updateProduct, deleteProduct };
+const topSell = catchAsync(async (req, res) => {
+  const products = await productService.topSell();
+  res.send(products);
+});
+const noiBat = catchAsync(async (req, res) => {
+  const products = await productService.noiBat();
+  res.send(products);
+});
+
+const flashSale = catchAsync(async (req, res) => {
+  const products = await productService.flashSale();
+  res.send(products);
+});
+module.exports = { getProducts, createProduct, getProductById, updateProduct, deleteProduct, topSell, noiBat, flashSale, getAdminProducts };

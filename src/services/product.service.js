@@ -1,4 +1,4 @@
-const { Products, Shop, ProductLike, category } = require('../models');
+const { Products, Shop, ProductLike, Category } = require('../models');
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
 
@@ -13,22 +13,31 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   const newFilter = {};
 
   // Transform filter to support $in operator for arrays
-  Object.entries(filter).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      newFilter[key] = { $in: value };
-    } else {
-      newFilter[key] = value;
-    }
-  });
+  if (filter.filter) {
+    const categories = await Category.find({ name: { $in: filter.name } });
+    filter.category = { $in: categories.map((c) => c._id) };
+    filter.name = { $regex: filter.name, $options: 'i' };
+  }
+  if(filter.bestSeller) {
+    newFilter.isBestSeller = filter.bestSeller;
+  }
+  if(filter.fastSale) {
+    newFilter.isFastSale = filter.fastSale;
+    newFilter.fastSaleStartDate = { $lte: new Date() };
+    newFilter.fastSaleEndDate = { $gte: new Date() };
+  }
+  if(filter.trending) {
+    newFilter.trending = filter.trending;
+  }
 
   let query;
 
   // Handle cursor-based pagination
   if (options.cursor) {
     // If cursor is provided, check if it’s for the next or previous page
-    if (options.cursor === 'prev') {
+    if (options.action === 'prev') {
       // Handle fetching the previous page
-      query = Products.find(newFilter).sort({_id: -1});
+      newFilter._id = { $lt: options.cursor };
       const updatedLimit = options.limit ? options.limit + 1 : 11;
       query = query.limit(updatedLimit);
     } else {
@@ -51,7 +60,7 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
 
     // Determine the next and previous cursors
     const prevCursor = results.length > 0 ? results[0]._id : null;
-    const nextCursor = results.length === (options.limit + 1) ? results[results.length - 1]._id : null;
+    const nextCursor = results.length === options.limit + 1 ? results[results.length - 1]._id : null;
 
     // Return the paginated results
     return {
@@ -65,7 +74,6 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   }
 }
 
-
 /**
  * Create a product
  * @param {string} shopID
@@ -75,13 +83,15 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
 
 async function createProduct(productBody) {
   try {
-    await Products.find({ name: productBody.name }).then((product) => {
-      if (product.length > 0) {
-        throw new Error( 'Product already exists');
-      }
-    }).catch((error) => {
-      throw new Error(error);
-    });
+    await Products.find({ name: productBody.name })
+      .then((product) => {
+        if (product.length > 0) {
+          throw new Error('Product already exists');
+        }
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
     console.log('productBody', productBody);
     const product = await Products.create(productBody);
     return product;
@@ -278,12 +288,21 @@ const exportProducts = async (filter) => {
     filter.price = { $gte: filter.price };
   }
   if (filter.category) {
-    const categories = await category.find({ name: { $in: filter.category } });
+    const categories = await Category.find({ name: { $in: filter.category } });
     filter.category = { $in: categories.map((c) => c._id) };
   }
 
+  return Products.find(filter, '-__v -updatedAt').lean();
+};
 
-  return Products.find(filter, '-__v -updatedAt' ).lean();
+const topSell = async () => {
+  return Products.find({ isBestSeller: true }, '-__v -updatedAt').lean();
+};
+const noiBat = async () => {
+  return Products.find({}, '-__v -updatedAt -createdAt ').sort({updatedAt: -1}).limit(10).lean();
+};
+const flashSale = async () => {
+  return Products.find({ isFastSale: true, fastSaleEndDate:{$gte: new Date()}, fastSaleStartDate: {$lte: new Date()},status: 'public'  }, '-__v -updatedAt -createdAt').lean();
 };
 module.exports = {
   queryProducts,
@@ -302,4 +321,7 @@ module.exports = {
   updateComment,
   deleteComment,
   exportProducts,
+  topSell,
+  noiBat,
+  flashSale,
 };

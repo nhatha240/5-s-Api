@@ -5,8 +5,11 @@ const {productController} = require('../../controllers');
 
 const router = express.Router();
 
-router.route('/:id').get(validate(getProduct), productController.getProductById);
 router.route('/').get(productController.getProducts);
+router.route('/top-sell').get(productController.topSell);
+router.route('/noi-bat').get(productController.noiBat);
+router.route('/flash-sale').get(productController.flashSale);
+router.route('/:id').get(validate(getProduct), productController.getProductById);
 
 // router.post('/webhook', orderController.webhookPayment);
 module.exports = router;

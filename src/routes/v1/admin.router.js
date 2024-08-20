@@ -37,7 +37,7 @@ router.post(
   admin(),
   productController.createProduct
 );
-router.get('/get-products', admin(), productController.getProducts);
+router.get('/get-products', admin(), productController.getAdminProducts);
 router.get('/get-product/:id', validate(productValidation.getProduct), admin(), productController.getProductById);
 router.put(
   '/update-product/:id',
