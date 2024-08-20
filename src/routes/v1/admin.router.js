@@ -32,7 +32,7 @@ router.delete('/delete-admin/:id', admin('SuperAdmin'), adminController.deleteAd
 
 router.post(
   '/create-product/',
-  uploadImage('images', 'array'),
+  uploadImage('image', 'array'),
   validate(productValidation.createProduct),
   admin(),
   productController.createProduct
