@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 const paginate = (schema) => {
   /**
    * @typedef {Object} QueryResult
@@ -33,25 +35,14 @@ const paginate = (schema) => {
     const limit = options.limit && parseInt(options.limit, 10) > 0 ? parseInt(options.limit, 10) : 10;
     const page = options.page && parseInt(options.page, 10) > 0 ? parseInt(options.page, 10) : 1;
     const skip = (page - 1) * limit;
+
     const countPromise = this.countDocuments(filter).exec();
-    let docsPromise = this.find(filter)
-      .sort(sort)
-      .skip(skip)
-      .limit(limit + 1);
+    let docsPromise = this.find(filter).sort(sort).skip(skip).limit(limit);
 
     if (options.populate) {
-      options.populate.split(',').forEach((populateOption) => {
-        docsPromise = docsPromise.populate(
-          populateOption
-            .split('.')
-            .reverse()
-            .reduce((a, b) => ({ path: b, populate: a })),
+      options.populate.forEach((populateOption) => {
+        docsPromise = docsPromise.populate({path: populateOption.path, select: populateOption.select}
         );
-      });
-    }
-    if (options.select) {
-      options.select.split(',').forEach((selectOption) => {
-        docsPromise = docsPromise.select(selectOption);
       });
     }
 
@@ -61,10 +52,9 @@ const paginate = (schema) => {
       const [totalResults, results] = values;
       const totalPages = Math.ceil(totalResults / limit);
       const result = {
-        results: results.slice(0, options.limit),
+        results,
         page,
         limit,
-        nextCursor: results.length > limit ? results[results.length - 1].id : null,
         totalPages,
         totalResults,
       };

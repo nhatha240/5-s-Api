@@ -39,13 +39,13 @@ const createProduct = catchAsync(async (req, res) => {
 const getProducts = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'bestSeller', 'fastSale','trending' ]);
   filter.status = 'public';
-  const options = pick(req.query, ['sortBy', 'limit', 'cursor', 'action']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await productService.queryProducts(filter, options);
   res.send(result);
 });
 const getAdminProducts = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'bestSeller', 'fastSale','trending' ]);
-  const options = pick(req.query, ['sortBy', 'limit', 'cursor', 'action']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await productService.queryProducts(filter, options);
   res.send(result);
 });

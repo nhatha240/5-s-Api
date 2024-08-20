@@ -31,30 +31,15 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   }
 
   let query;
-
+  // options.sortBy = options.sortBy || 'createdAt:desc';
   if (options.cursor) {
-    query = Products.find({ ...newFilter, _id: { $gt: options.cursor } });
+    query = Products.paginate(newFilter, options);
   }
-  query = Products.find(newFilter);
+  query = Products.paginate(newFilter,options);
 
-  const results = await query
-    .limit(parseInt(options.limit) + 1)
-    .sort({ _id: 1 })
-    .lean();
+  const results = await query;
 
-  const hasNextPage = results.length > options.limit;
-  if (hasNextPage) {
-    results.pop(); // Remove the extra document
-  }
-  const prevCursor = options.cursor && results.length > 0 ? results[0]._id : null;
-  const nextCursor = hasNextPage ? results[results.length - 1]._id : null;
-  return {
-    limit: options.limit,
-    nextCursor,
-    prevCursor,
-    totalResults: results.length,
-    results,
-  };
+  return { results };
 }
 
 /**
