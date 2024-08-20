@@ -7,7 +7,7 @@ const { productService, categoryService } = require('../services');
 const createProduct = catchAsync(async (req, res) => {
   const body = pick(req.body, [
     'name',
-    'images',
+    'image',
     'description',
     'discountPrice',
     'price',

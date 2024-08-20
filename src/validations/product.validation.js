@@ -10,7 +10,7 @@ const getProduct = {
 const createProduct = {
   body: Joi.object().keys({
     name: Joi.string().required(),
-    images: Joi.array(),
+    image: Joi.array(),
     description: Joi.string().required(),
     discountPrice: Joi.number(),
     price: Joi.number().required(),
