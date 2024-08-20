@@ -18,60 +18,43 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
     filter.category = { $in: categories.map((c) => c._id) };
     filter.name = { $regex: filter.name, $options: 'i' };
   }
-  if(filter.bestSeller) {
+  if (filter.bestSeller) {
     newFilter.isBestSeller = filter.bestSeller;
   }
-  if(filter.fastSale) {
+  if (filter.fastSale) {
     newFilter.isFastSale = filter.fastSale;
     newFilter.fastSaleStartDate = { $lte: new Date() };
     newFilter.fastSaleEndDate = { $gte: new Date() };
   }
-  if(filter.trending) {
+  if (filter.trending) {
     newFilter.trending = filter.trending;
   }
 
   let query;
 
-  // Handle cursor-based pagination
   if (options.cursor) {
-    // If cursor is provided, check if it’s for the next or previous page
-    if (options.action === 'prev') {
-      // Handle fetching the previous page
-      newFilter._id = { $lt: options.cursor };
-      const updatedLimit = options.limit ? options.limit + 1 : 11;
-      query = query.limit(updatedLimit);
-    } else {
-      // Handle fetching the next page
-      newFilter._id = { $gt: options.cursor };
-      query = Products.find(newFilter);
-      const updatedLimit = options.limit ? options.limit + 1 : 11;
-      query = query.limit(updatedLimit);
-    }
-  } else {
-    // No cursor, regular pagination
-    query = Products.find(newFilter);
-    const updatedLimit = options.limit ? options.limit : 10;
-    query = query.limit(updatedLimit);
+    query = Products.find({ ...newFilter, _id: { $gt: options.cursor } });
   }
+  query = Products.find(newFilter);
 
-  try {
-    // Execute the query
-    const results = await query.exec();
+  const results = await query
+    .limit(parseInt(options.limit) + 1)
+    .sort({ _id: 1 })
+    .lean();
 
-    // Determine the next and previous cursors
-    const prevCursor = results.length > 0 ? results[0]._id : null;
-    const nextCursor = results.length === options.limit + 1 ? results[results.length - 1]._id : null;
-
-    // Return the paginated results
-    return {
-      nextCursor,
-      prevCursor,
-      totalResults: results.length > options.limit ? results.length - 1 : results.length,
-      results: results.slice(0, options.limit), // Exclude the extra item if present
-    };
-  } catch (error) {
-    throw new Error(`Error fetching results: ${error.message}`);
+  const hasNextPage = results.length > options.limit;
+  if (hasNextPage) {
+    results.pop(); // Remove the extra document
   }
+  const prevCursor = options.cursor && results.length > 0 ? results[0]._id : null;
+  const nextCursor = hasNextPage ? results[results.length - 1]._id : null;
+  return {
+    limit: options.limit,
+    nextCursor,
+    prevCursor,
+    totalResults: results.length,
+    results,
+  };
 }
 
 /**
@@ -299,10 +282,13 @@ const topSell = async () => {
   return Products.find({ isBestSeller: true }, '-__v -updatedAt').lean();
 };
 const noiBat = async () => {
-  return Products.find({}, '-__v -updatedAt -createdAt ').sort({updatedAt: -1}).limit(10).lean();
+  return Products.find({}, '-__v -updatedAt -createdAt ').sort({ updatedAt: -1 }).limit(10).lean();
 };
 const flashSale = async () => {
-  return Products.find({ isFastSale: true, fastSaleEndDate:{$gte: new Date()}, fastSaleStartDate: {$lte: new Date()},status: 'public'  }, '-__v -updatedAt -createdAt').lean();
+  return Products.find(
+    { isFastSale: true, fastSaleEndDate: { $gte: new Date() }, fastSaleStartDate: { $lte: new Date() }, status: 'public' },
+    '-__v -updatedAt -createdAt',
+  ).lean();
 };
 module.exports = {
   queryProducts,
