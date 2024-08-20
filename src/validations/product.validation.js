@@ -37,7 +37,7 @@ const updateProduct = {
   body: Joi.object()
     .keys({
       name: Joi.string(),
-      images: Joi.array(),
+      image: Joi.array(),
       description: Joi.string(),
       discountPrice: Joi.number(),
       price: Joi.number(),
