@@ -10,7 +10,7 @@ const adminsSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    image: { type: String },
+    image: { type: String, default: '/public/uploads/default.jpg' },
     email: {
       type: String,
       required: true,
@@ -111,5 +111,4 @@ Admins.findOne({})
       defaultAdmin.save();
     }
   });
-
 module.exports = Admins;
