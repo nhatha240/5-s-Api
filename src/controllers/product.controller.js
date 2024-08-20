@@ -17,6 +17,7 @@ const createProduct = catchAsync(async (req, res) => {
     'isBestSeller',
     'quantity',
     'tags',
+    'trending',
     'isFastSale',
     'fastSalePrice',
     'fastSaleStartDate',

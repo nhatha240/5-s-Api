@@ -76,7 +76,7 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
 async function createProduct(productBody) {
   try {
     await Products.find({ name: productBody.name }).then((product) => {
-      if (product) {
+      if (product.length > 0) {
         throw new Error( 'Product already exists');
       }
     }).catch((error) => {
@@ -87,14 +87,14 @@ async function createProduct(productBody) {
     return product;
   } catch (error) {
     console.log('error create', error);
-    throw new ApiError(httpStatus.BAD_REQUEST, error.message);
+    throw new ApiError(httpStatus.CONFLICT, error.message);
   }
 }
 
 /**
  * Get product by id
  * @param {string} productId
- * @returns {Promise<Product>}
+ * @returns {Promise<product>}
  */
 
 async function getProductById(productId) {
@@ -109,7 +109,7 @@ async function getProductById(productId) {
  * @param {Object} admin
  * @param {string} productId
  * @param {Object} updateBody
- * @returns {Promise<Product>}
+ * @returns {Promise<product>}
  */
 
 async function updateProduct(product, updateBody) {
