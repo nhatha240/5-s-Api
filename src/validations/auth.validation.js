@@ -7,7 +7,22 @@ const registerAdmin = {
     password: Joi.string().required().custom(password),
     image: Joi.string(),
     name: Joi.string().required(),
-    role: Joi.string().valid('admin', 'delivery', 'shop').required(),
+    role: Joi.string().valid('admin'),
+    phone: Joi.string(),
+    firstName: Joi.string(),
+    lastName: Joi.string(),
+  }),
+};
+const updateAdmin = {
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().custom(password),
+    image: Joi.string(),
+    name: Joi.string().required(),
+    role: Joi.string().valid('admin'),
+    phone: Joi.string(),
+    firstName: Joi.string(),
+    lastName: Joi.string(),
   }),
 };
 
@@ -79,4 +94,5 @@ module.exports = {
   resetPassword,
   verifyEmail,
   register,
+  updateAdmin
 };

@@ -58,6 +58,18 @@ const removeAdmin = async (adminId) => {
   await user.remove();
 };
 
+const updateAdmin = async (adminId, updateBody) => {
+  const user = await getAdminById(adminId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  if (updateBody.email && (await Admins.isEmailTaken(updateBody.email, adminId))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+  Object.assign(user, updateBody);
+  await user.save();
+  return user;
+}
 module.exports = {
   getAdminByEmail,
   createAdmin,
@@ -66,4 +78,5 @@ module.exports = {
   getAdmins,
   queryAdminId,
   removeAdmin,
+  updateAdmin,
 };

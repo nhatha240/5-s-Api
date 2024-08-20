@@ -52,6 +52,10 @@ const changePassword = catchAsync(async (req, res) => {
   await authAdminService.changePassword(req.user, req.body);
   res.status(httpStatus.NO_CONTENT).send();
 });
+const updateAdmin = catchAsync(async (req, res) => {
+  const user = await adminService.updateAdmin(req.params.id, req.body);
+  res.send(user);
+});
 module.exports = {
   register,
   login,
@@ -62,4 +66,5 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   changePassword,
+  updateAdmin,
 };

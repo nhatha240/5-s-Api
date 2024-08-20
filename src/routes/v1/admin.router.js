@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/login', validate(authValidation.login), authAdminController.login);
 router.post('/register', uploadImage('image','single'), validate(authValidation.registerAdmin), admin('SuperAdmin'), authAdminController.register);
-router.post('/register', uploadImage('image'), validate(authValidation.registerAdmin), admin('SuperAdmin'), authAdminController.register);
+router.post('/update', uploadImage('image','single'), validate(authValidation.updateAdmin), admin('SuperAdmin'), authAdminController.updateAdmin);
 router.post('/logout', validate(authValidation.logout), authAdminController.logout);
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authAdminController.refreshTokens);
 router.post('/forgot-password', validate(authValidation.forgotPassword), authAdminController.forgotPassword);

@@ -44,10 +44,13 @@ const adminsSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    firstName: String,
+    lastName: String,
+    phone: String,
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // add plugin that converts mongoose to json
@@ -89,19 +92,24 @@ adminsSchema.index({ email: 1 });
 const Admins = mongoose.model('Admins', adminsSchema);
 
 // Add default data if collection is empty
-Admins.findOne({}).exec().then((err, result) => {
-  if (err) {
-    console.error(err);
-  } else if (!result) {
-    const defaultAdmin = new Admins({
-      name: 'Default Admin 1',
-      email: 'admin@example.com',
-      password: 'winYourLife@123',
-      role: 'admin',
-      isEmailVerified: true,
-    });
-    defaultAdmin.save();
-  }
-});
+Admins.findOne({})
+  .exec()
+  .then((err, result) => {
+    if (err) {
+      console.error(err);
+    } else if (!result) {
+      const defaultAdmin = new Admins({
+        name: 'Default Admin 1',
+        email: 'admin@example.com',
+        password: 'winYourLife@123',
+        role: 'admin',
+        isEmailVerified: true,
+        firstName: 'Default',
+        lastName: 'Admin',
+        phone: '1234567890',
+      });
+      defaultAdmin.save();
+    }
+  });
 
 module.exports = Admins;
