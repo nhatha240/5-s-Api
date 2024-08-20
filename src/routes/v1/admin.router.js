@@ -74,7 +74,7 @@ router.delete('/delete-order/:id', admin(), adminController.deleteOrder);
 router.post('/create-category',uploadImage('image'), admin(), validate(categoryValidation.createCategory), adminController.createCategory);
 router.get('/get-categories', admin(), validate(categoryValidation.getCategories), adminController.getCategories);
 router.get('/get-category/:id', admin(), validate(categoryValidation.getCategory), adminController.getCategory);
-router.put('/update-category',uploadImage('image'), admin(), validate(categoryValidation.updateCategory), adminController.updateCategory);
+router.put('/update-category',uploadImage('image','single' ), admin(), validate(categoryValidation.updateCategory), adminController.updateCategory);
 router.delete('/delete-category/:id', admin(), validate(categoryValidation.deleteCategory), adminController.deleteCategory);
 
 // /*

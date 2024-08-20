@@ -72,7 +72,7 @@ const getCategoryByIds = async (ids) => {
  */
 
 const updateCategoryById = async (updateBody) => {
-  const category = await getCategoryById(updateBody.categoryId);
+  const category = await Category.findOne({_id: updateBody.categoryId}).exec();
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
   }

@@ -7,7 +7,7 @@ const uploadImage = function (field, type = 'single') {
       if (type === 'single') {
         upload.single(field)(req, res, function (err) {
           if (err instanceof multer.MulterError) {
-            return res.status(500).send({ message: `Multer error: ${err.message}` });
+            return res.status(500).send({ message: `Multer error field name not true: ${err.message}` });
           } else if (err) {
             return res.status(500).send({ message: `Could not upload the file: ${err}` });
           } else if (!req.file) {
