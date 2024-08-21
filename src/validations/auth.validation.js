@@ -16,7 +16,7 @@ const registerAdmin = {
 const updateAdmin = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().custom(password),
+    password: Joi.string().custom(password),
     image: Joi.string(),
     name: Joi.string().required(),
     role: Joi.string().valid('admin'),
