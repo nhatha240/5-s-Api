@@ -9,7 +9,15 @@ const getComments = async (filter, option) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
   const productId = products.map((product) => product._id);
-  const comments = await ProductComment.paginate({ productId:  productId } , option);
+  option.populate = [{ path: 'userId', select: 'name' }];
+  const comments = await ProductComment.paginate({ productId: productId }, option);
+  comments.results = comments.results.map((comment) => {
+    let createdAt = new Date(comment.createdAt);
+    comment = comment.toJSON();
+    comment.commentTime = createdAt.toLocaleString();
+    return comment; // Convert the Mongoose document to a plain object
+  });
+  console.log(comments.results);
   return comments;
 };
 
@@ -111,7 +119,7 @@ const exportRating = async (filter) => {
 };
 
 const getCommentsByProduct = async (productId, userId) => {
-  const comment =  await ProductComment.find({ productId, userId }).exec();
+  const comment = await ProductComment.find({ productId, userId }).exec();
   const commentId = comment.map((comment) => comment._id);
   return commentId;
 };
