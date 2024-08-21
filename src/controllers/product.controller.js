@@ -24,7 +24,7 @@ const createProduct = catchAsync(async (req, res) => {
     'fastSaleEndDate',
   ]);
   body.image = body.image ?? ['public/uploads/products/default.jpg'];
-  if(body.discountPrice < body.price) {
+  if (body.discountPrice < body.price) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Discount price must be less than price');
   }
   body.options = pick(req.body, ['size', 'color']);
@@ -37,14 +37,14 @@ const createProduct = catchAsync(async (req, res) => {
 });
 
 const getProducts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'bestSeller', 'fastSale','trending' ]);
+  const filter = pick(req.query, ['name', 'bestSeller', 'fastSale', 'trending']);
   filter.status = 'public';
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await productService.queryProducts(filter, options);
   res.send(result);
 });
 const getAdminProducts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'bestSeller', 'fastSale','trending' ]);
+  const filter = pick(req.query, ['name', 'bestSeller', 'fastSale', 'trending']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await productService.queryProducts(filter, options);
   res.send(result);
@@ -59,6 +59,9 @@ const getProductById = catchAsync(async (req, res) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
+  const category = await categoryService.getCategoryByIds(product.category.map((item) => item._id));
+  const { results } = await productService.queryProducts({ category: category.map((item) => item._id) }, { limit: 10 });
+  product.relate = results.results;
   res.send(product);
 });
 
@@ -118,7 +121,7 @@ const updateProduct = catchAsync(async (req, res) => {
 
 const deleteProduct = catchAsync(async (req, res) => {
   // The productService.deleteProductById function is called with the product ID from the request parameters.
-  if(req.admin.role !== 'admin') {
+  if (req.admin.role !== 'admin') {
     throw new ApiError(httpStatus.FORBIDDEN, 'You are not authorized to delete this products');
   }
   const product = await productService.getProductById(req.params.id);
@@ -147,4 +150,14 @@ const flashSale = catchAsync(async (req, res) => {
   const products = await productService.flashSale();
   res.send(products);
 });
-module.exports = { getProducts, createProduct, getProductById, updateProduct, deleteProduct, topSell, noiBat, flashSale, getAdminProducts };
+module.exports = {
+  getProducts,
+  createProduct,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  topSell,
+  noiBat,
+  flashSale,
+  getAdminProducts,
+};

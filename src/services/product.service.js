@@ -42,6 +42,7 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   return { results };
 }
 
+
 /**
  * Create a product
  * @param {string} shopID
@@ -76,7 +77,7 @@ async function createProduct(productBody) {
  */
 
 async function getProductById(productId) {
-  const product = await Products.findOne({ _id: productId });
+  const product = await Products.findOne({ _id: productId }).populate('category').lean();
   if (!product) {
     throw new Error('Product not found');
   }
