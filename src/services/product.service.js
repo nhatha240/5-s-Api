@@ -61,7 +61,6 @@ async function createProduct(productBody) {
       .catch((error) => {
         throw new Error(error);
       });
-    console.log('productBody', productBody);
     const product = await Products.create(productBody);
     return product;
   } catch (error) {

@@ -17,7 +17,6 @@ const getComments = async (filter, option) => {
     comment.commentTime = createdAt.toLocaleString();
     return comment; // Convert the Mongoose document to a plain object
   });
-  console.log(comments.results);
   return comments;
 };
 
