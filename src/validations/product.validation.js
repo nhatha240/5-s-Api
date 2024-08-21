@@ -49,6 +49,7 @@ const updateProduct = {
       isBestSeller: Joi.boolean(),
       quantity: Joi.number(),
       tags: Joi.array(),
+      trending: Joi.boolean(),
       isFastSale: Joi.boolean(),
       fastSalePrice: Joi.number(),
       fastSaleStartDate: Joi.date(),
