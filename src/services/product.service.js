@@ -91,9 +91,10 @@ async function getProductById(productId) {
  */
 
 async function updateProduct(product, updateBody) {
-  Object.assign(product, updateBody);
-  await product.save();
-  return product;
+  const productData = await Products.findOne({ _id: product._id });
+  Object.assign(productData, updateBody);
+  await productData.save();
+  return productData;
 }
 
 /**
