@@ -9,7 +9,7 @@ const getComments = async (filter, option) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
   const productId = products.map((product) => product._id);
-  const comments = await ProductComment.paginate({ productId: { $in: productId } }, option);
+  const comments = await ProductComment.paginate({ productId:  productId } , option);
   return comments;
 };
 
