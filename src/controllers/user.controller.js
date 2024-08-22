@@ -45,6 +45,12 @@ const likeProduct = catchAsync(async (req, res) => {
   await productService.likeProduct(req.user.id, productId);
   res.status(httpStatus.NO_CONTENT).send({});
 });
+
+const getLikes = catchAsync(async (req, res) => {
+  const products = await productService.getLikedProducts(req.user.id);
+  res.send(products);
+});
+
 const unlikeProduct = catchAsync(async (req, res) => {
   const productId = req.body.productId;
   const product = await productService.getProductById(productId);
@@ -65,4 +71,5 @@ module.exports = {
   deleteUser,
   likeProduct,
   unlikeProduct,
+  getLikes,
 };

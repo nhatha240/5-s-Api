@@ -276,6 +276,11 @@ const flashSale = async () => {
     '-__v -updatedAt -createdAt',
   ).lean();
 };
+
+const getLikedProducts = async (userId) => {
+  const likedProducts = await ProductLike.find({ userId: userId }).populate('productId').lean();
+  return likedProducts.map((like) => like.productId);
+};
 module.exports = {
   queryProducts,
   createProduct,
@@ -296,4 +301,5 @@ module.exports = {
   topSell,
   noiBat,
   flashSale,
+  getLikedProducts,
 };

@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 const productLikeSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    productId: { type: Schema.Types.ObjectId, ref: 'Products', required: true },
+    productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
   },
   {
     timestamps: true,

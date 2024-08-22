@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.post('/like', auth(), validate(userValidation.like), userController.likeProduct);
 router.post('/unlike', auth(), validate(userValidation.unlike), userController.unlikeProduct);
+router.get('/like', auth(), userController.getLikes);
 router.post('/rating', auth(), validate(userValidation.comment), commentsController.addComment);
 router.put('/rating', auth(), validate(userValidation.updateComment), commentsController.updateComment);
 router.get('/rating', auth(), validate(userValidation.getRatings), commentsController.getComments);
