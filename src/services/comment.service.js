@@ -137,8 +137,9 @@ const exportRating = async (filter) => {
     .name();
 };
 
-const getCommentsByProduct = async (productId, userId) => {
-  const comment = await ProductComment.find({ productId, userId }).exec();
+const getCommentsByProduct = async (productId, userId, order) => {
+
+  const comment = await ProductComment.find({ productId, userId, order }).exec();
   const commentId = comment.map((comment) => comment._id);
   return commentId;
 };
