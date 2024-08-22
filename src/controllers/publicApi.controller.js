@@ -19,11 +19,11 @@ const getComments = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(result);
 });
 const getTopComments = catchAsync(async (req, res) => {
-  const status = 'public';
-  const filter = { status, rating: { $gte: 4 } };
+  // const status = 'public';
+  const filter = { rating: { $gte: 4 } };
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   options.sortBy = 'rating';
-  const result = await commentService.getComments(filter, options);
+  const result = await commentService.getTopComments(filter, options);
   res.status(httpStatus.OK).send(result);
 });
 

@@ -20,6 +20,18 @@ const getComments = async (filter, option) => {
   return comments;
 };
 
+const getTopComments = async (filter, option) => {
+  option.populate = [{ path: 'userId', select: 'name' }];
+  const comments = await ProductComment.paginate(filter, option);
+  comments.results = comments.results.map((comment) => {
+    let createdAt = new Date(comment.createdAt);
+    comment = comment.toJSON();
+    comment.commentTime = createdAt.toLocaleString();
+    return comment; // Convert the Mongoose document to a plain object
+  });
+  return comments;
+};
+
 const queryOneLastComment = async (userId) => {
   return await ProductComment.findOne({ userId }).populate({ path: 'productId', select: 'name image options price' }).exec();
 };
@@ -133,4 +145,5 @@ module.exports = {
   exportRating,
   getRating,
   getCommentsByProduct,
+  getTopComments,
 };
