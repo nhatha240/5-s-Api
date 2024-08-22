@@ -7,13 +7,14 @@ const logger = require('../config/logger');
 
 const getComments = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['status', 'productId']);
+  const order = pick(req.query, ['order']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await commentService.getComments(filter, options);
+  const result = await commentService.getComments(filter, options, order);
   res.send(result);
 });
 
 const addComment = catchAsync(async (req, res) => {
-  req.body.status = false;
+  req.body.status = true;
   req.body.userId = req.user.id;
   await commentService.addComment(req.body);
   await productService.addComment(req.body.productId, req.body.rating);

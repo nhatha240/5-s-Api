@@ -3,20 +3,28 @@ const httpStatus = require('http-status');
 const { ProductComment, User, Products } = require('../models');
 const { productService } = require('./index');
 
-const getComments = async (filter, option) => {
+const getComments = async (filter, option, order) => {
   const products = await Products.find(filter).exec();
   if (!products || products.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
   const productId = products.map((product) => product._id);
   option.populate = [{ path: 'userId', select: 'name' }];
-  const comments = await ProductComment.paginate({ productId: productId }, option);
+  let query = { productId: productId };
+
+  if (order && typeof order === 'object' && Object.keys(order).length > 0) {
+    query.order = order.order;
+  }
+  console.log(query);
+  const comments = await ProductComment.paginate(query, option);
+
   comments.results = comments.results.map((comment) => {
     let createdAt = new Date(comment.createdAt);
-    comment = comment.toJSON();
+    comment = comment.toJSON(); // Convert the Mongoose document to a plain object
     comment.commentTime = createdAt.toLocaleString();
-    return comment; // Convert the Mongoose document to a plain object
+    return comment;
   });
+
   return comments;
 };
 

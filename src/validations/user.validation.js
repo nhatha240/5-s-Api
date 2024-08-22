@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { password, objectId } = require('./custom.validation');
+const { order } = require('./order.validation');
 
 const createUser = {
   body: Joi.object().keys({
@@ -58,6 +59,7 @@ const comment = {
     productId: Joi.string().custom(objectId).required(),
     comment: Joi.string(),
     rating: Joi.number().integer().min(1).max(5).required(),
+    order: Joi.string().custom(objectId),
   }),
 };
 const updateComment = {
@@ -75,6 +77,7 @@ const getRatings = {
   params: Joi.object().keys({
     comment: Joi.string(),
     products: Joi.string(),
+    order: Joi.string(),
   }),
 };
 
