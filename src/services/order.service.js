@@ -118,6 +118,10 @@ const getOrderById = async (idUser, orderId) => {
     .populate({ path: 'products.product', select: '-status -isBestSeller -quantity -description -discountPrice' })
     .lean();
 };
+const getOrderId = async (idUser, orderId) => {
+  return Order.findOne({ _id: orderId, idUser: idUser })
+    .exec();
+};
 const getOrderByAdminId = async (orderId) => {
   return Order.findOne({ _id: orderId })
     .select('-__v')
@@ -394,4 +398,5 @@ module.exports = {
   orderByUser,
   exportOrder,
   topProduct,
+  getOrderId,
 };

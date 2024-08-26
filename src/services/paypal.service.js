@@ -110,7 +110,6 @@ const captureOrder = async (order) => {
     },
     method: 'POST',
   });
-
   return handleResponse(response);
 };
 
@@ -130,6 +129,7 @@ const updatePayment = async (transactionId, status) => {
   }
   payment.status = status;
   await payment.save();
+  return payment.orderId;
 };
 
 const getPaymentById = async (transactionId) => {
