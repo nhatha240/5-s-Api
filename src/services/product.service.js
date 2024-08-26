@@ -100,9 +100,6 @@ async function createProduct(productBody) {
 
 async function getProductById(productId) {
   const product = await Products.findOne({ _id: productId }).populate('category').lean();
-  if (!product) {
-    throw new Error('Product not found');
-  }
   return product;
 }
 /**
