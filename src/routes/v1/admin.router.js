@@ -4,6 +4,7 @@ const { authValidation, productValidation, categoryValidation, userValidation } 
 const { authAdminController, adminController, productController, commentsController } = require('../../controllers');
 const admin = require('../../middlewares/admin');
 const uploadImage = require('../../middlewares/upload');
+const thongKeRoute= require('./thongKe.route');
 
 const router = express.Router();
 
@@ -102,5 +103,5 @@ router.get('/csv/order', admin(), adminController.csvOrder);
 router.get('/csv/products', admin(), adminController.csvProducts);
 router.get('/csv/customers', admin(), adminController.csvCustomers);
 router.get('/csv/rating', admin(), adminController.csvRating);
-
+router.use('/thongke', thongKeRoute);
 module.exports = router;

@@ -33,9 +33,6 @@ const defaultRoutes = [
     route: productsRoute,
   },
   {
-    path: '/thongke',
-    route: thongKeRoute,
-  }, {
     path: '/',
     route: publicApiRoute,
   },
