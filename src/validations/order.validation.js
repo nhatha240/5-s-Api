@@ -6,6 +6,8 @@ const addOrder = {
     products: Joi.array().items(Joi.object().keys({
       product: Joi.string().custom(objectId),
       quantity: Joi.number().required(),
+      size: Joi.string(),
+      color: Joi.string(),
     })),
     address: Joi.string(),
     phone: Joi.string(),
