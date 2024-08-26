@@ -31,6 +31,9 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   if (filter.bestSeller) {
     newFilter.isBestSeller = filter.bestSeller;
   }
+  if (filter.status) {
+    newFilter.status = filter.status;
+  }
   if (filter.fastSale) {
     newFilter.isFastSale = filter.fastSale;
     newFilter.fastSaleStartDate = { $lte: new Date() };
