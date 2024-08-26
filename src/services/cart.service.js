@@ -49,7 +49,8 @@ const addCart = async (userId, productId, quantity, color, size) => {
       } else {
         // If the product is already in the cart, update the quantity
         cart.products[productIndex].quantity += quantity;
-
+        cart.products[productIndex].color = color;
+        cart.products[productIndex].size = size;
         if(cart.products[productIndex].quantity > product.quantity){
           cart.products[productIndex].quantity = product.quantity;
           cart.products[productIndex].color = color;
