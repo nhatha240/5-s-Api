@@ -14,9 +14,19 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
 
   // Transform filter to support $in operator for arrays
   if (filter.name) {
+    console.log(filter.name);
+    // Filter by category name first
     const categories = await Category.find({ name: { $in: filter.name } });
-    filter.category = { $in: categories.map((c) => c._id) };
-    filter.name = { $regex: filter.name, $options: 'i' };
+    // if (categories.length > 0) {
+    //   // If categories are found, filter by their IDs
+    //   newFilter.category = { $in: categories.map((c) => c._id) };
+    // }
+    // // Also filter by product name using regex
+    // newFilter.name = { $regex: filter.name, $options: 'i' };
+    newFilter.$or = [
+      { name: { $regex: filter.name, $options: 'i' } },
+      { category: { $in: categories.map((c) => c._id) } },
+    ];
   }
   if (filter.bestSeller) {
     newFilter.isBestSeller = filter.bestSeller;
