@@ -7,7 +7,7 @@ const getCart = async (userId) => {
   return Cart.findOne({ userId }).select('-userId -createdAt -updatedAt -__v').populate('products.product', '-__v -createdAt -updatedAt -quantity -description -category');
 };
 
-const addCart = async (userId, productId, quantity) => {
+const addCart = async (userId, productId, quantity, color, size) => {
   try {
     let cart = await Cart.findOne({ userId: userId });
     const product = await Products.findOne({ _id: productId });
@@ -24,7 +24,7 @@ const addCart = async (userId, productId, quantity) => {
       }
       cart = new Cart({
         userId: userId,
-        products: [{ product: productId, quantity: quantity }],
+        products: [{ product: productId, quantity: quantity, color: color, size: size }],
       });
     } else {
       // Ensure products is initialized
@@ -45,13 +45,15 @@ const addCart = async (userId, productId, quantity) => {
         if(quantity > product.quantity){
           quantity = product.quantity;
         }
-        cart.products.push({ product: productId, quantity: quantity });
+        cart.products.push({ product: productId, quantity: quantity, color: color, size: size });
       } else {
         // If the product is already in the cart, update the quantity
         cart.products[productIndex].quantity += quantity;
 
         if(cart.products[productIndex].quantity > product.quantity){
           cart.products[productIndex].quantity = product.quantity;
+          cart.products[productIndex].color = color;
+          cart.products[productIndex].size = size;
         }
         // Remove the product if the quantity is zero or less
         if (cart.products[productIndex].quantity <= 0) {

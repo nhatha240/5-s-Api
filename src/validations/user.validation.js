@@ -91,6 +91,8 @@ const addCart = {
   body: Joi.object().keys({
     productId: Joi.string().required().custom(objectId),
     quantity: Joi.number().required().integer(),
+    size: Joi.string(),
+    color: Joi.string(),
   }),
 };
 

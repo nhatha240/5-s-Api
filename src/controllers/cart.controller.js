@@ -2,9 +2,10 @@ const httpStatus = require('http-status');
 // const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { cartService } = require('../services');
+const pick = require('../utils/pick');
 
 const addCart = catchAsync(async (req, res) => {
-  const cart = await cartService.addCart(req.user._id, req.body.productId, req.body.quantity);
+  const cart = await cartService.addCart(req.user._id, req.body.productId, req.body.quantity, req.body.color, req.body.size);
   res.status(httpStatus.OK).send(cart);
 });
 
