@@ -125,7 +125,7 @@ async function updateProduct(product, updateBody) {
  * @throws {Error} - If the admin is not allowed to delete the product.
  */
 async function deleteProductById(product) {
-  await product.deleteOne();
+  await Products.deleteOne({ _id: product._id });
 }
 
 /**
