@@ -13,7 +13,7 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   const newFilter = {};
 
   // Transform filter to support $in operator for arrays
-  if (filter.filter) {
+  if (filter.name) {
     const categories = await Category.find({ name: { $in: filter.name } });
     filter.category = { $in: categories.map((c) => c._id) };
     filter.name = { $regex: filter.name, $options: 'i' };
