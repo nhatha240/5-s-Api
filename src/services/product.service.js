@@ -29,8 +29,12 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   if (filter.trending) {
     newFilter.trending = filter.trending;
   }
-  if(filter.color){
-    newFilter.color = {$in: filter.color};
+  if (filter.color) {
+    newFilter.options = {
+      $elemMatch: {
+        color: { $regex: new RegExp(filter.color, 'i') }
+      }
+    };
   }
   if(filter.priceRage && filter.priceRage.length === 2  && parseInt(filter.priceRage[0]) <= parseInt(filter.priceRage[1])){
     newFilter.price = {$gte: parseInt(filter.priceRage[0]), $lte: parseInt(filter.priceRage[1])};
