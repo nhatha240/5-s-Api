@@ -119,8 +119,7 @@ const getOrderById = async (idUser, orderId) => {
     .lean();
 };
 const getOrderId = async (idUser, orderId) => {
-  return Order.findOne({ _id: orderId, idUser: idUser })
-    .exec();
+  return Order.findOne({ _id: orderId, idUser: idUser }).exec();
 };
 const getOrderByAdminId = async (orderId) => {
   return Order.findOne({ _id: orderId })
@@ -381,6 +380,127 @@ const topProduct = async (time) => {
   });
   return result;
 };
+
+const itemSold = async () => {
+  const time = new Date();
+  time.setDate(time.getDate() - 7);
+  try {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    const result = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sevenDaysAgo }, // Match orders created in the last 7 days
+        },
+      },
+      {
+        $unwind: '$products', // Deconstruct the products array
+      },
+      {
+        $group: {
+          _id: null,
+          totalProductsSold: { $sum: '$products.quantity' }, // Sum the quantities of all products
+        },
+      },
+    ]);
+
+    return result.length > 0 ? result[0].totalProductsSold : 0; // Return the total or 0 if no orders found
+  } catch (error) {
+    console.error('Error counting products sold:', error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
+
+const revenue = async () => {
+  try {
+    const Revenue = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Filter for orders in the last 7 days
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$totalAmount' }, // Sum the totalAmount field for matching orders
+        },
+      },
+    ]);
+
+    return Revenue.length > 0 ? Revenue[0].total : 0; // Return 0 if no orders found
+  } catch (error) {
+    console.log(error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
+
+const createdLastTimeCount = async () => {
+  try {
+    const today = new Date();
+    const sevenDaysAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6);
+
+    const pipeline = [
+      {
+        $match: {
+          createdAt: { $gte: sevenDaysAgo }, // Filter orders created in the last 7 days
+        },
+      },
+      {
+        $unwind: '$products', // Unwind the products array
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, // Group by day
+          totalRevenue: { $sum: '$products.priceTotal' }, // Sum the priceTotal for each day
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by day in ascending order
+      },
+      {
+        $group: {
+          _id: null,
+          data: {
+            $push: {
+              k: '$_id',
+              v: '$totalRevenue',
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          data: {
+            $arrayToObject: '$data',
+          },
+          _id: 0,
+        },
+      },
+    ];
+
+    const results = await Order.aggregate(pipeline);
+
+    const revenuesByDay = results[0] ? results[0].data : {};
+
+    // Fill in missing days with 0 revenue
+    const last7DaysRevenue = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+      const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD format
+      last7DaysRevenue.push({
+        date: dateString,
+        revenue: revenuesByDay[dateString] || 0, // Use revenue for the day or 0 if not present
+      });
+    }
+
+    return last7DaysRevenue.reverse(); // Return in ascending order of days
+  } catch (error) {
+    console.error('Error counting revenue:', error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
 module.exports = {
   queryOrders,
   getOrderById,
@@ -399,4 +519,7 @@ module.exports = {
   exportOrder,
   topProduct,
   getOrderId,
+  itemSold,
+  revenue,
+  createdLastTimeCount,
 };

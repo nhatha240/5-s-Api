@@ -41,22 +41,18 @@ const bieuDo = catchAsync(async (req, res) => {
 });
 
 const bayNgay = catchAsync(async (req, res) => {
-  const time = new Date();
-  time.setDate(time.getDate() - 7);
   try {
-    const createdLastTimeCount = await userService.createdLastTimeCount(time);
+    const itemSold = await orderService.itemSold();
     // Số lượng product thêm vào giỏ hàng
-    const cart = await cartService.thongKeProduct(time);
-    // Số lượng đơn hàng
-    const order = await orderService.thongKeOrder(time);
-    // Số lượng người dùng đăng ký
-    const lastLoginLastTimeCount = await userService.lastLoginLastTimeCount(time);
+    const Revenue = await orderService.revenue();
+    // Revenue in last 7 days
+    const RevenueInSevenDay = await orderService.createdLastTimeCount();
+
 
     res.send({
-      createdLastTimeCount,
-      cart,
-      order,
-      lastLoginLastTimeCount,
+      itemSold,
+      Revenue,
+      RevenueInSevenDay,
     });
   } catch (error) {
     console.log(error);
