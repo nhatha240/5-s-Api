@@ -9,6 +9,9 @@ const addCart = catchAsync(async (req, res) => {
 });
 
 const getCart = catchAsync(async (req, res) => {
+  if(!req.user){
+    res.status(httpStatus.OK).send([]);
+  }
   const result = await cartService.getCart(req.user.id);
   res.send(result);
 });

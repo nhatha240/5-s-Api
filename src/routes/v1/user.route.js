@@ -4,6 +4,7 @@ const validate = require('../../middlewares/validate');
 const {userValidation, orderValidation} = require('../../validations');
 const {userController, commentsController, orderController, cartController} = require('../../controllers');
 const uploadImage = require('../../middlewares/upload');
+const isAuth = require('../../middlewares/isAuth');
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.put('/rating', auth(), validate(userValidation.updateComment), commentsCo
 router.get('/rating', auth(), validate(userValidation.getRatings), commentsController.getComments);
 router.get('/rating/:id', auth(), validate(userValidation.getRating), commentsController.getRating);
 router.post('/add-cart', auth(), validate(userValidation.addCart), cartController.addCart);
-router.get('/list-cart', auth(), cartController.getCart);
+router.get('/list-cart', isAuth(), cartController.getCart);
 router.post('/remove-cart', auth(), cartController.removeCart);
 router.post('/add-order', auth(), validate(orderValidation.addOrder), orderController.addOrder);
 router.get('/orders', auth(), orderController.getOrders); // get order by user id
