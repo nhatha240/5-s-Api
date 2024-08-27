@@ -231,7 +231,13 @@ const shopDeleteProduct = async (userID, productID) => {
   return product;
 };
 const likeProduct = async (userId, productId) => {
-  return ProductLike.create({ userId: userId, productId: productId });
+  const productLike = await ProductLike.findOne({ productId: productId, userId: userId });
+  if (productLike) {
+    await ProductLike.deleteOne({ userId: userId, productId: productId });
+    return false;
+  }
+  await ProductLike.create({ userId: userId, productId: productId });
+  return true;
 };
 
 const unlikeProduct = async (userId, productId) => {
@@ -300,6 +306,85 @@ const getLikedProducts = async (userId) => {
   const likedProducts = await ProductLike.find({ userId: userId }).populate('productId').lean();
   return likedProducts.map((like) => like.productId);
 };
+
+const getProductsForUser = async (userId, filter = {}, options = {}) => {
+  const newFilter = {};
+
+  // Transform filter to support $in operator for arrays
+  if (filter.name) {
+    // Filter by category name first
+    const categories = await Category.find({ name: { $regex: filter.name, $options: 'i' } });
+    // if (categories.length > 0) {
+    //   // If categories are found, filter by their IDs
+    //   newFilter.category = { $in: categories.map((c) => c._id) };
+    // }
+    // // Also filter by product name using regex
+    // newFilter.name = { $regex: filter.name, $options: 'i' };
+    newFilter.$or = [
+      { name: { $regex: filter.name, $options: 'i' } },
+      { category: { $in: categories.map((c) => c._id) } },
+    ];
+  }
+  if (filter.bestSeller) {
+    newFilter.isBestSeller = filter.bestSeller;
+  }
+  if (filter.status) {
+    newFilter.status = filter.status;
+  }
+  if (filter.fastSale) {
+    newFilter.isFastSale = filter.fastSale;
+    newFilter.fastSaleStartDate = { $lte: new Date() };
+    newFilter.fastSaleEndDate = { $gte: new Date() };
+  }
+  if (filter.trending) {
+    newFilter.trending = filter.trending;
+  }
+  if (filter.color) {
+    newFilter.options = {
+      $elemMatch: {
+        color: { $regex: new RegExp(filter.color, 'i') }
+      }
+    };
+  }
+  if(filter.priceRage && filter.priceRage.length === 2  && parseInt(filter.priceRage[0]) <= parseInt(filter.priceRage[1])){
+    newFilter.price = {$gte: parseInt(filter.priceRage[0]), $lte: parseInt(filter.priceRage[1])};
+  }
+  const products = await Products.aggregate([
+    // Match the products based on any filter criteria
+    { $match: newFilter },
+
+    // Perform the lookup to find out if the product is liked by the user
+    {
+      $lookup: {
+        from: 'productlikes', // The collection name (use lowercase and plural if using default naming)
+        let: { productId: '$_id' },
+        pipeline: [
+          { $match: { $expr: { $and: [{ $eq: ['$productId', '$$productId'] }, { $eq: ['$userId', userId] }] } } },
+          { $limit: 1 }, // Limit to one document for efficiency
+        ],
+        as: 'likedByUser',
+      },
+    },
+
+    // Add a 'liked' field to each product
+    {
+      $addFields: {
+        liked: { $cond: { if: { $gt: [{ $size: '$likedByUser' }, 0] }, then: true, else: false } },
+      },
+    },
+
+    // Remove the 'likedByUser' array since it's no longer needed
+    { $project: { likedByUser: 0 } },
+
+    // Optionally sort or paginate
+    { $sort: { createdAt: -1 } }, // Example: sorting by creation date
+    { $skip: parseInt(options.skip) || 0 }, // For pagination
+    { $limit: parseInt(options.limit) || 10 }, // For pagination
+  ]).exec();
+
+  return products;
+};
+
 module.exports = {
   queryProducts,
   createProduct,
@@ -321,4 +406,5 @@ module.exports = {
   noiBat,
   flashSale,
   getLikedProducts,
+  getProductsForUser,
 };

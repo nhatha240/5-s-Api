@@ -41,7 +41,14 @@ const getProducts = catchAsync(async (req, res) => {
   filter.status = 'public';
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   options.sortBy = 'createdAt:desc';
-  const result = await productService.queryProducts(filter, options);
+  let result;
+  console.log('user', req.user);
+  if(req.user){
+    console.log(req.user._id);
+    result = await productService.getProductsForUser(req.user._id,filter, options);
+  }else{
+    result = await productService.queryProducts(filter, options);
+  }
   res.send(result);
 });
 const getAdminProducts = catchAsync(async (req, res) => {

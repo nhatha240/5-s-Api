@@ -42,8 +42,8 @@ const likeProduct = catchAsync(async (req, res) => {
   }
 
   // Add the product to the user's likes if it's not already there
-  await productService.likeProduct(req.user.id, productId);
-  res.status(httpStatus.NO_CONTENT).send({});
+  const like = await productService.likeProduct(req.user.id, productId);
+  res.status(httpStatus.NO_CONTENT).send({like: like});
 });
 
 const getLikes = catchAsync(async (req, res) => {
