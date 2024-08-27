@@ -52,6 +52,7 @@ const getProducts = catchAsync(async (req, res) => {
 const getAdminProducts = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'bestSeller', 'flashSale', 'trending']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  options.sortBy = 'createdAt:desc';
   const result = await productService.queryProducts(filter, options);
   res.send(result);
 });
