@@ -22,10 +22,7 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
     // }
     // // Also filter by product name using regex
     // newFilter.name = { $regex: filter.name, $options: 'i' };
-    newFilter.$or = [
-      { name: { $regex: filter.name, $options: 'i' } },
-      { category: { $in: categories.map((c) => c._id) } },
-    ];
+    newFilter.$or = [{ name: { $regex: filter.name, $options: 'i' } }, { category: { $in: categories.map((c) => c._id) } }];
   }
   if (filter.bestSeller) {
     newFilter.isBestSeller = filter.bestSeller;
@@ -44,12 +41,12 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   if (filter.color) {
     newFilter.options = {
       $elemMatch: {
-        color: { $regex: new RegExp(filter.color, 'i') }
-      }
+        color: { $regex: new RegExp(filter.color, 'i') },
+      },
     };
   }
-  if(filter.priceRage && filter.priceRage.length === 2  && parseInt(filter.priceRage[0]) <= parseInt(filter.priceRage[1])){
-    newFilter.price = {$gte: parseInt(filter.priceRage[0]), $lte: parseInt(filter.priceRage[1])};
+  if (filter.priceRage && filter.priceRage.length === 2 && parseInt(filter.priceRage[0]) <= parseInt(filter.priceRage[1])) {
+    newFilter.price = { $gte: parseInt(filter.priceRage[0]), $lte: parseInt(filter.priceRage[1]) };
   }
 
   let query;
@@ -57,13 +54,12 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   if (options.cursor) {
     query = Products.paginate(newFilter, options);
   }
-  query = Products.paginate(newFilter,options);
+  query = Products.paginate(newFilter, options);
 
-  const results = await query;
+  // const results = await query;
 
-  return { results };
+  return query;
 }
-
 
 /**
  * Create a product
@@ -320,10 +316,7 @@ const getProductsForUser = async (userId, filter = {}, options = {}) => {
     // }
     // // Also filter by product name using regex
     // newFilter.name = { $regex: filter.name, $options: 'i' };
-    newFilter.$or = [
-      { name: { $regex: filter.name, $options: 'i' } },
-      { category: { $in: categories.map((c) => c._id) } },
-    ];
+    newFilter.$or = [{ name: { $regex: filter.name, $options: 'i' } }, { category: { $in: categories.map((c) => c._id) } }];
   }
   if (filter.bestSeller) {
     newFilter.isBestSeller = filter.bestSeller;
@@ -342,13 +335,18 @@ const getProductsForUser = async (userId, filter = {}, options = {}) => {
   if (filter.color) {
     newFilter.options = {
       $elemMatch: {
-        color: { $regex: new RegExp(filter.color, 'i') }
-      }
+        color: { $regex: new RegExp(filter.color, 'i') },
+      },
     };
   }
-  if(filter.priceRage && filter.priceRage.length === 2  && parseInt(filter.priceRage[0]) <= parseInt(filter.priceRage[1])){
-    newFilter.price = {$gte: parseInt(filter.priceRage[0]), $lte: parseInt(filter.priceRage[1])};
+  if (filter.priceRage && filter.priceRage.length === 2 && parseInt(filter.priceRage[0]) <= parseInt(filter.priceRage[1])) {
+    newFilter.price = { $gte: parseInt(filter.priceRage[0]), $lte: parseInt(filter.priceRage[1]) };
   }
+  const limit = parseInt(options.limit) || 10;
+  const page = parseInt(options.page) || 1;
+  const skip = (page - 1) * limit;
+  const totalResults = await Products.countDocuments(newFilter);
+  const totalPages = Math.ceil(totalResults / limit);
   const products = await Products.aggregate([
     // Match the products based on any filter criteria
     { $match: newFilter },
@@ -378,11 +376,11 @@ const getProductsForUser = async (userId, filter = {}, options = {}) => {
 
     // Optionally sort or paginate
     { $sort: { createdAt: -1 } }, // Example: sorting by creation date
-    { $skip: parseInt(options.skip) || 0 }, // For pagination
-    { $limit: parseInt(options.limit) || 10 }, // For pagination
+    { $skip: skip }, // For pagination
+    { $limit: limit }, // For pagination
   ]).exec();
 
-  return products;
+  return { results: products, page: page, limit: limit, totalPages, totalResults };
 };
 
 module.exports = {
