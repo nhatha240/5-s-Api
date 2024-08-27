@@ -69,7 +69,14 @@ const getProductById = catchAsync(async (req, res) => {
   }
   const category = await categoryService.getCategoryByIds(product.category.map((item) => item._id));
   const { results } = await productService.queryProducts({ category: category.map((item) => item._id) }, { limit: 10 });
-  product.relate = results.results;
+  product.relate = results;
+
+  if (req.user) {
+    const like = await productService.getUserProduct(req.user._id, req.params.id);
+    product.liked = like;
+  }else{
+    product.liked = false;
+  }
   res.send(product);
 });
 

@@ -48,12 +48,16 @@ async function queryProducts(filter = {}, options = { cursor: null, limit: 10 })
   if (filter.priceRage && filter.priceRage.length === 2 && parseInt(filter.priceRage[0]) <= parseInt(filter.priceRage[1])) {
     newFilter.price = { $gte: parseInt(filter.priceRage[0]), $lte: parseInt(filter.priceRage[1]) };
   }
+  if(filter.category){
+    newFilter.category = { $in: filter.category };
+  }
 
   let query;
   // options.sortBy = options.sortBy || 'createdAt:desc';
   if (options.cursor) {
     query = Products.paginate(newFilter, options);
   }
+
   query = Products.paginate(newFilter, options);
 
   // const results = await query;
@@ -383,6 +387,13 @@ const getProductsForUser = async (userId, filter = {}, options = {}) => {
   return { results: products, page: page, limit: limit, totalPages, totalResults };
 };
 
+const getProductByIdAndUser = async (productId, userId) => {
+  const product = await ProductLike.findOne({ productId: productId, userId: userId });
+  if (product) {
+    return true;
+  }
+  return false;
+}
 module.exports = {
   queryProducts,
   createProduct,
@@ -405,4 +416,5 @@ module.exports = {
   flashSale,
   getLikedProducts,
   getProductsForUser,
+  getProductByIdAndUser,
 };
