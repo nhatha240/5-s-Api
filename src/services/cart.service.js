@@ -106,9 +106,9 @@ const removeCart = async (userId, productId) => {
 };
 
 const deleteCart = async (userId) => {
-  const cart = await Cart.deleteOne({ userId: userId });
-  cart.products = [];
-  cart.save();
+  await Cart.deleteOne({ userId: userId });
+  // cart.products = [];
+  // cart.save();
 }
 module.exports = {
   getCart,
