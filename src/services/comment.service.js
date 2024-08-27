@@ -15,7 +15,6 @@ const getComments = async (filter, option, order) => {
   if (order && typeof order === 'object' && Object.keys(order).length > 0) {
     query.order = order.order;
   }
-  console.log(query);
   const comments = await ProductComment.paginate(query, option);
 
   comments.results = comments.results.map((comment) => {

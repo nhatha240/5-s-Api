@@ -42,9 +42,7 @@ const getProducts = catchAsync(async (req, res) => {
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   options.sortBy = 'createdAt:desc';
   let result;
-  console.log('user', req.user);
   if(req.user){
-    console.log(req.user._id);
     result = await productService.getProductsForUser(req.user._id,filter, options);
   }else{
     result = await productService.queryProducts(filter, options);
