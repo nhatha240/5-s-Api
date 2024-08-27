@@ -63,7 +63,8 @@ const getAdminProducts = catchAsync(async (req, res) => {
  * @returns {Promise<Product>}
  */
 const getProductById = catchAsync(async (req, res) => {
-  const product = await productService.getProductById(req.params.id);
+  const id = req.params.id;
+  const product = await productService.getProductById(id);
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
@@ -72,7 +73,7 @@ const getProductById = catchAsync(async (req, res) => {
   product.relate = results;
 
   if (req.user) {
-    const like = await productService.getUserProduct(req.user._id, req.params.id);
+    const like = await productService.getProductByIdAndUser(req.user._id, id);
     product.liked = like;
   }else{
     product.liked = false;

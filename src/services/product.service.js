@@ -387,7 +387,7 @@ const getProductsForUser = async (userId, filter = {}, options = {}) => {
   return { results: products, page: page, limit: limit, totalPages, totalResults };
 };
 
-const getProductByIdAndUser = async (productId, userId) => {
+const getProductByIdAndUser = async ( userId, productId) => {
   const product = await ProductLike.findOne({ productId: productId, userId: userId });
   if (product) {
     return true;
